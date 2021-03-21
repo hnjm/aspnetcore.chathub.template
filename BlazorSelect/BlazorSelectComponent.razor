@@ -1,0 +1,29 @@
+﻿@namespace BlazorSelect
+
+@inherits BlazorSelectBase
+
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+
+<select class="custom-select custom-select-sm" @onchange="@OnSelectionChange">
+
+    @foreach (var item in SelectionItems)
+    {
+
+        if (item == SelectedItem)
+        {
+            <option value="@item" selected>@item</option>
+        }
+        else
+        {
+            <option value="@item">@item</option>
+        }
+
+    }
+
+</select>
+
+
+@code {
+
+}

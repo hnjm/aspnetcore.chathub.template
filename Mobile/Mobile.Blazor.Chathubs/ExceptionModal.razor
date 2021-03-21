@@ -1,0 +1,40 @@
+﻿@namespace Mobile.Blazor.Chathubs
+
+@using Oqtane.Shared.Models
+@using Microsoft.AspNetCore.SignalR
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.AspNetCore.Http.Connections
+
+<ModalContainer @ref="ExceptionModalContainer" OnClosed="async () => OnExceptionModalClosed()">
+
+    <ContentPage>
+
+        <StackLayout>
+            <Label Text="@Message" VerticalOptions="LayoutOptions.CenterAndExpand" HorizontalOptions="LayoutOptions.CenterAndExpand" FontAttributes="FontAttributes.Bold"></Label>
+        </StackLayout>
+
+    </ContentPage>
+
+</ModalContainer>
+
+@code {
+
+    [Inject]
+    public ChatHubService ChatHubService { get; set; }
+
+    [Parameter]
+    public string Message { get; set; }
+
+    public ModalContainer ExceptionModalContainer { get; set; }
+
+    public async void OnExceptionModalOpened()
+    {
+        ExceptionModalContainer.ShowDialog();
+    }
+
+    public async void OnExceptionModalClosed()
+    {
+        ExceptionModalContainer.FinishClosingDialog();
+    }
+
+}

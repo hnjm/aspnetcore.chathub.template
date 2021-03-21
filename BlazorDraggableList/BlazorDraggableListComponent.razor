@@ -1,0 +1,52 @@
+﻿@namespace BlazorDraggableList
+
+@inherits BlazorDraggableListBase<TItemGeneric>
+
+@typeparam TItemGeneric
+
+<style>
+
+    .draggable-item {
+        cursor: grab;
+    }
+
+    .dropzone {
+        position: absolute;
+        z-index: 1;
+        display: none;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255,216,0,0.3);
+        border: 3px dashed #ff006e;
+    }
+
+    .active-dropzone {
+        background-color: rgba(76, 255, 0, 0.3);
+        border: 3px dashed rgb(0, 255, 144);
+    }
+</style>
+
+<section id="@Id" class="blazor-draggable-list @Class">
+
+    @for (int i = 0; i < Items.Count(); i++)
+    {
+        var temp = i;
+
+        <div class="position-relative">
+
+            <div id="blazor-draggable-list-item-@temp" class="draggable-item" draggable="true">
+                @BlazorDraggableListItem(Items[temp])
+            </div>
+
+            <div id="blazor-draggable-list-item-dropzone-@temp" class="dropzone dropzone-@temp" />
+
+        </div>
+    }
+
+</section>
+
+@code {
+
+}

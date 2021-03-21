@@ -1,0 +1,26 @@
+﻿@namespace BlazorWindows
+
+@using Microsoft.AspNetCore.Components.Web
+
+@ChildContent
+
+@code {
+
+    [CascadingParameter]
+    public IWindowItem WindowItem { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        this.WindowItem.WindowLivestream = ChildContent;
+        return base.OnInitializedAsync();
+    }
+
+    public void Dispose()
+    {
+
+    }
+
+}

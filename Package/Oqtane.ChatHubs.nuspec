@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Oqtane.ChatHubs</id>
+    <version>1.0.0</version>
+    <authors>Benjamin Strohmann</authors>
+    <owners>Benjamin Strohmann</owners>
+    <title>ChatHubs</title>
+    <description>ChatHubs</description>
+    <copyright>Benjamin Strohmann</copyright>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/oqtane/oqtane.framework</projectUrl>
+    <iconUrl>https://www.oqtane.org/Portals/0/icon.jpg</iconUrl>
+    <tags>asp .net core signalr template oqtane module chat signalr</tags>
+    <releaseNotes></releaseNotes>
+    <summary></summary>
+    <dependencies>
+		
+        <dependency id="Oqtane.Framework" version="2.0.0" />      
+		    <dependency id="System.Drawing.Common" version="5.0.0" />
+		    <dependency id="MatBlazor" version="2.3.0" />
+		    <dependency id="Microsoft.CSharp" version="4.7.0" />
+		    <dependency id="BlazorStrap" version="1.3.3" />
+		    <dependency id="Microsoft.AspNetCore.SignalR.Client" version="5.0.0" />
+        <dependency id="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" version="5.0.0" />
+        <dependency id="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" version="5.0.0" />
+		    <dependency id="Microsoft.Composition" version="1.0.31" />
+      
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="..\Client\bin\Release\net5.0\Oqtane.ChatHubs.Client.Oqtane.dll" target="lib\net5.0" />
+    <file src="..\Client\bin\Release\net5.0\Oqtane.ChatHubs.Client.Oqtane.pdb" target="lib\net5.0" />
+    <file src="..\Server\bin\Release\net5.0\Oqtane.ChatHubs.Server.Oqtane.dll" target="lib\net5.0" />
+    <file src="..\Server\bin\Release\net5.0\Oqtane.ChatHubs.Server.Oqtane.pdb" target="lib\net5.0" />
+    <file src="..\Shared\bin\Release\net5.0\Oqtane.ChatHubs.Shared.Oqtane.dll" target="lib\net5.0" />
+    <file src="..\Shared\bin\Release\net5.0\Oqtane.ChatHubs.Shared.Oqtane.pdb" target="lib\net5.0" />
+    <file src="..\BlazorAlerts\bin\Release\net5.0\BlazorAlerts.dll" target="lib\net5.0" />
+    <file src="..\BlazorAlerts\bin\Release\net5.0\BlazorAlerts.pdb" target="lib\net5.0" />
+    <file src="..\BlazorAccordion\bin\Release\net5.0\BlazorAccordion.dll" target="lib\net5.0" />
+    <file src="..\BlazorAccordion\bin\Release\net5.0\BlazorAccordion.pdb" target="lib\net5.0" />
+    <file src="..\BlazorSelect\bin\Release\net5.0\BlazorSelect.dll" target="lib\net5.0" />
+    <file src="..\BlazorSelect\bin\Release\net5.0\BlazorSelect.pdb" target="lib\net5.0" />
+    <file src="..\BlazorModal\bin\Release\net5.0\BlazorModal.dll" target="lib\net5.0" />
+    <file src="..\BlazorModal\bin\Release\net5.0\BlazorModal.pdb" target="lib\net5.0" />
+    <file src="..\BlazorWindows\bin\Release\net5.0\BlazorWindows.dll" target="lib\net5.0" />
+    <file src="..\BlazorWindows\bin\Release\net5.0\BlazorWindows.pdb" target="lib\net5.0" />
+    <file src="..\BlazorTabs\bin\Release\net5.0\BlazorTabs.dll" target="lib\net5.0" />
+    <file src="..\BlazorTabs\bin\Release\net5.0\BlazorTabs.pdb" target="lib\net5.0" />
+    <file src="..\BlazorPager\bin\Release\net5.0\BlazorPager.dll" target="lib\net5.0" />
+    <file src="..\BlazorPager\bin\Release\net5.0\BlazorPager.pdb" target="lib\net5.0" />
+    <file src="..\BlazorDraggableList\bin\Release\net5.0\BlazorDraggableList.dll" target="lib\net5.0" />
+    <file src="..\BlazorDraggableList\bin\Release\net5.0\BlazorDraggableList.pdb" target="lib\net5.0" />
+    <file src="..\BlazorFileUpload\bin\Release\net5.0\BlazorFileUpload.dll" target="lib\net5.0" />
+    <file src="..\BlazorFileUpload\bin\Release\net5.0\BlazorFileUpload.pdb" target="lib\net5.0" />
+    <file src="..\BlazorColorPicker\bin\Release\net5.0\BlazorColorPicker.dll" target="lib\net5.0" />
+    <file src="..\BlazorColorPicker\bin\Release\net5.0\BlazorColorPicker.pdb" target="lib\net5.0" />
+    <file src="..\BlazorVideo\bin\Release\net5.0\BlazorVideo.dll" target="lib\net5.0" />
+    <file src="..\BlazorVideo\bin\Release\net5.0\BlazorVideo.pdb" target="lib\net5.0" />
+    <file src="..\Server\wwwroot\**\*.*" target="wwwroot" />
+    <file src="..\BlazorAlerts\wwwroot\**\*.*" target="wwwroot" />
+  </files>
+</package>

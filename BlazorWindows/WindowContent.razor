@@ -1,0 +1,19 @@
+﻿@namespace BlazorWindows
+
+@ChildContent
+
+@code {
+
+    [CascadingParameter] public IWindowItem WindowItem { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    protected override Task OnInitializedAsync()
+    {
+        this.WindowItem.WindowContent = ChildContent;
+        this.WindowItem.UpdateWindowContent();
+
+        return base.OnInitializedAsync();
+    }
+
+}

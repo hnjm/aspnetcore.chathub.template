@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <RazorLangVersion>3.0</RazorLangVersion>
+    <AssemblyName>BlazorVideo</AssemblyName>
+    <OutputType>Library</OutputType>
+    <Version>1.0.0</Version>
+    <Product>BlazorVideo</Product>
+    <Authors>Benjamin Strohmann</Authors>
+    <Company>Benjamin Strohmann</Company>
+    <Copyright>Benjamin Strohmann</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="5.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="5.0.0" />
+  </ItemGroup>
+
+</Project>

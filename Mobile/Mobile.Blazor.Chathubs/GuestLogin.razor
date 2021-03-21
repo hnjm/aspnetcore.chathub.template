@@ -1,0 +1,64 @@
+﻿@namespace Mobile.Blazor.Chathubs
+
+@using Oqtane.Shared.Models
+@using Microsoft.AspNetCore.SignalR
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.AspNetCore.Http.Connections
+
+
+<StackLayout Orientation="StackOrientation.Horizontal">
+
+    @if (ChatHubService.Connection == null || ChatHubService.Connection?.State == HubConnectionState.Disconnected)
+    {
+        <Frame BorderColor="Color.Purple" HorizontalOptions="LayoutOptions.FillAndExpand" CornerRadius="0" Margin="1" Padding="10" BackgroundColor="Color.MediumPurple">
+            <StackLayout>
+
+                <Entry @bind-Text="Guestname"
+                        Placeholder="Choose your username"
+                        OnCompleted="Login"
+                        IsEnabled="(!isEnabled)"
+                        HorizontalOptions="LayoutOptions.FillAndExpand" />
+
+                <Button Text="Enter Chat" OnClick="async () => await Login()" />
+
+            </StackLayout>
+        </Frame>
+    }
+    else if (ChatHubService.Connection?.State == HubConnectionState.Connected)
+    {
+        <Frame BorderColor="Color.Green" HorizontalOptions="LayoutOptions.FillAndExpand" CornerRadius="0" Margin="1" Padding="10" BackgroundColor="Color.LightGreen">
+            <StackLayout>
+
+                <Button Text="@string.Format("Connected as {0}", ChatHubService.ConnectedUser?.DisplayName)" OnClick="async () => await ChatHubService.DisconnectAsync()" BackgroundColor="Color.Transparent" />
+
+            </StackLayout>
+        </Frame>
+    }
+
+</StackLayout>
+
+@code {
+
+    [Inject]
+    public ChatHubService ChatHubService { get; set; }
+
+    [Parameter]
+    public ChatComponent ChatComponentReference { get; set; }
+
+    public string Guestname { get; set; }
+
+    bool isEnabled;
+    bool isLogin;
+
+    private async Task Login()
+    {
+        isLogin = true;
+        StateHasChanged();
+
+        await this.ChatComponentReference.ConnectAsGuest();
+
+        isLogin = false;
+        StateHasChanged();
+    }
+
+}

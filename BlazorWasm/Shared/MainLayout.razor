@@ -1,0 +1,45 @@
+﻿@inherits LayoutComponentBase
+
+@using BlazorTouchMenu
+@using BlazorTabMenu
+@using BlazorDropdown
+@using BlazorAlerts
+
+<div class="page h-100">
+
+    <BlazorTouchMenuComponent MenuItemModels="@MenuItemModels"></BlazorTouchMenuComponent>    
+
+    <div class="main h-100">
+
+        <div class="content px-2 px-sm-4" style="position: absolute; height: 90vh; overflow-y: auto;">
+            @Body
+        </div>
+
+        <div class="w-100 px-2 px-sm-4 py-2 position-absolute" style="height: 10vh; bottom: 0; background-color: royalblue;">
+
+            <BlazorTabMenuComponent TabMenuItemModels="@TabMenuItemModels"></BlazorTabMenuComponent>
+
+        </div>
+
+    </div>
+</div>
+
+<BlazorAlertsComponent></BlazorAlertsComponent>
+
+@code {
+
+    public List<BlazorTouchMenuItemModel> MenuItemModels { get; set; } = new List<BlazorTouchMenuItemModel>()
+    {
+        new BlazorTouchMenuItemModel() { Name = "Home", Href = "", Icon = "oi-home", NavLinkMatch = NavLinkMatch.All },
+        new BlazorTouchMenuItemModel() { Name = "Counter", Href = "counter", Icon = "oi-plus", NavLinkMatch = NavLinkMatch.Prefix },
+        new BlazorTouchMenuItemModel() { Name = "Fetch Data", Href = "fetchdata", Icon = "oi-list-rich", NavLinkMatch = NavLinkMatch.Prefix },
+    };
+
+    public List<BlazorTabMenuItemModel> TabMenuItemModels { get; set; } = new List<BlazorTabMenuItemModel>()
+    {
+        new BlazorTabMenuItemModel() { Name = "Home", Href = "", Icon = "oi-home", NavLinkMatch = NavLinkMatch.All },
+        new BlazorTabMenuItemModel() { Name = "Counter", Href = "counter", Icon = "oi-plus", NavLinkMatch = NavLinkMatch.Prefix },
+        new BlazorTabMenuItemModel() { Name = "Fetch Data", Href = "fetchdata", Icon = "oi-list-rich", NavLinkMatch = NavLinkMatch.Prefix },
+    };
+
+}

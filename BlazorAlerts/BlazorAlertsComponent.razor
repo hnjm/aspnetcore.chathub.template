@@ -1,0 +1,48 @@
+﻿@namespace BlazorAlerts
+
+@inherits BlazorAlertsBase
+
+@using System.Collections.Generic
+@using System.Linq
+@using Microsoft.AspNetCore.Components.Web
+
+@if (BlazorAlertsService.BlazorAlerts.Any())
+{
+    <div class="blazoralerts-container">
+
+        <BlazorAlertsTemplate Items="BlazorAlertsService.BlazorAlerts">
+
+            <RenderHeadline Context="headline">
+                <span>@headline</span>
+            </RenderHeadline>
+            <RenderCloseButton Context="item">
+                <button type="button" @onclick="@(() => CloseAlert_OnClicked(item.Id))" class="btn btn-sm btn-danger float-right" aria-label="Close" style="line-height: 0.75; padding: 2px;">
+                    <span aria-hidden="true" style="position: relative; vertical-align: top; font-size: 28px;">&times;</span>
+                </button>
+            </RenderCloseButton>
+            <RenderImage Context="item">
+                <img src="_content/BlazorAlerts/hub-exception.png" class="img-fluid" width="72" />
+            </RenderImage>
+            <RenderMessage Context="item">
+                <p>@item.Message</p>
+            </RenderMessage>
+            <RenderOkButton Context="item">
+                <button type="button" @onclick="@(() => CloseAlert_OnClicked(item.Id))" class="btn btn-sm btn-link bg-light border-secondary mt-4 w-100" aria-label="Okay">
+                    Okay
+                </button>
+            </RenderOkButton>
+            <RenderConfirmButton Context="item">
+                <button type="button" @onclick="@(() => ConfirmAlert_OnClicked(item))" class="btn btn-sm btn-link bg-light border-secondary mt-4 w-100" aria-label="Confirm">
+                    Confirm
+                </button>
+            </RenderConfirmButton>
+            <RenderDenyButton Context="item">
+                <button type="button" @onclick="@(() => DenyAlert_OnClicked(item))" class="btn btn-sm btn-link bg-light border-secondary mt-4 w-100" aria-label="Deny">
+                    Deny
+                </button>
+            </RenderDenyButton>
+
+        </BlazorAlertsTemplate>
+
+    </div>
+}

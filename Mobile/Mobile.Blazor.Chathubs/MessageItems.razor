@@ -1,0 +1,124 @@
+﻿@namespace Mobile.Blazor.Chathubs
+
+@using System.Text.RegularExpressions
+@using Oqtane.Shared.Models
+@using System
+@using System.Linq
+@using System.Web
+
+<MessageTemplate Messages="@room.Messages.OrderBy(item => item.ModifiedOn).ThenBy(item => item.Id)" Context="item">
+    <SystemTemplate>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@string.Format("[{0}]", item.CreatedOn.ToLocalTime().ToString(ChatWindowDatePattern))"></Label>
+            <Label Text="@item.User.DisplayName" FontAttributes="FontAttributes.Bold"></Label>
+            <Label Text=":"></Label>
+        </StackLayout>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@(HighlightOwnUsername(HttpUtility.HtmlEncode(item.Content), ChatHubService.ConnectedUser.DisplayName))"></Label>
+        </StackLayout>
+    </SystemTemplate>
+    <AdminTemplate>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@string.Format("[{0}]", item.CreatedOn.ToLocalTime().ToString(ChatWindowDatePattern))"></Label>
+            <Label Text="@item.User.DisplayName" FontAttributes="FontAttributes.Bold"></Label>
+            <Label Text=":"></Label>
+        </StackLayout>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@(HighlightOwnUsername(HttpUtility.HtmlEncode(item.Content), ChatHubService.ConnectedUser.DisplayName))"></Label>
+        </StackLayout>
+    </AdminTemplate>
+    <UserTemplate>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@string.Format("[{0}]", item.CreatedOn.ToLocalTime().ToString(ChatWindowDatePattern))"></Label>
+            <Label Text="@item.User.DisplayName" FontAttributes="FontAttributes.Bold"></Label>
+            <Label Text=":"></Label>
+        </StackLayout>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@(HighlightOwnUsername(HttpUtility.HtmlEncode(item.Content), ChatHubService.ConnectedUser.DisplayName))"></Label>
+        </StackLayout>
+    </UserTemplate>
+    <GuestTemplate>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@string.Format("[{0}]", item.CreatedOn.ToLocalTime().ToString(ChatWindowDatePattern))"></Label>
+            <Label Text="@item.User.DisplayName" FontAttributes="FontAttributes.Bold"></Label>
+            <Label Text=":"></Label>
+        </StackLayout>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@(HighlightOwnUsername(HttpUtility.HtmlEncode(item.Content), ChatHubService.ConnectedUser.DisplayName))"></Label>
+        </StackLayout>
+    </GuestTemplate>
+    <WhisperTemplate>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@string.Format("[{0}]", item.CreatedOn.ToLocalTime().ToString(ChatWindowDatePattern))"></Label>
+            <Label Text="@item.User.DisplayName" FontAttributes="FontAttributes.Bold"></Label>
+            <Label Text=":"></Label>
+        </StackLayout>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@(HighlightOwnUsername(HttpUtility.HtmlEncode(item.Content), ChatHubService.ConnectedUser.DisplayName))"></Label>
+        </StackLayout>
+    </WhisperTemplate>
+    <MeTemplate>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@string.Format("[{0}]", item.CreatedOn.ToLocalTime().ToString(ChatWindowDatePattern))"></Label>
+            <Label Text="@item.User.DisplayName" FontAttributes="FontAttributes.Bold"></Label>
+            <Label Text=":"></Label>
+        </StackLayout>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@(HighlightOwnUsername(HttpUtility.HtmlEncode(item.Content), ChatHubService.ConnectedUser.DisplayName))"></Label>
+        </StackLayout>
+    </MeTemplate>
+    <EnterLeaveTemplate>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@string.Format("[{0}]", item.CreatedOn.ToLocalTime().ToString(ChatWindowDatePattern))"></Label>
+            <Label Text="@item.User.DisplayName" FontAttributes="FontAttributes.Bold"></Label>
+            <Label Text=":"></Label>
+        </StackLayout>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@(HighlightOwnUsername(HttpUtility.HtmlEncode(item.Content), ChatHubService.ConnectedUser.DisplayName))"></Label>
+        </StackLayout>
+    </EnterLeaveTemplate>
+    <ConnectDisconnectTemplate>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@string.Format("[{0}]", item.CreatedOn.ToLocalTime().ToString(ChatWindowDatePattern))"></Label>
+            <Label Text="@item.User.DisplayName" FontAttributes="FontAttributes.Bold"></Label>
+            <Label Text=":"></Label>
+        </StackLayout>
+        <StackLayout Orientation="StackOrientation.Horizontal">
+            <Label Text="@(HighlightOwnUsername(HttpUtility.HtmlEncode(item.Content), ChatHubService.ConnectedUser.DisplayName))"></Label>
+        </StackLayout>
+    </ConnectDisconnectTemplate>
+    <ImageTemplate>
+
+    </ImageTemplate>
+    <CommandsTemplate>
+
+    </CommandsTemplate>
+</MessageTemplate>
+
+@code {
+
+    [Inject]
+    public ChatHubService ChatHubService { get; set; }
+
+    [Parameter]
+    public ChatHubRoom room { get; set; }
+
+    public static string ChatWindowDatePattern = @"HH:mm:ss";
+    
+    public string HighlightOwnUsername(string message, string username)
+    {
+        try
+        {
+            string pattern = username;
+            string replacement = string.Format("{0}", "$0");
+            message = Regex.Replace(message, pattern, replacement);
+        }
+        catch (Exception ex)
+        {
+
+        }
+
+        return message;
+    }
+
+}

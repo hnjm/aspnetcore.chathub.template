@@ -1,0 +1,50 @@
+﻿@page "/"
+
+@inject BlazorAlertsService BlazorAlertsService
+
+@using BlazorAlerts
+@using BlazorDropdown
+
+<div style="height: 42px">
+
+    <BlazorDropdownComponent DropdownItemModels="@DropdownItemModels" DropdownItemClicked="@DropdownItemClicked"></BlazorDropdownComponent>
+
+</div>
+
+<div class="clearfix">
+
+    <SurveyPrompt Title="How is Blazor working for you?" />
+
+    <h1>Blazor wasm ui</h1>
+
+    <p>
+        <b>WebAssembly</b> (wasm) ist ein <a href="/wiki/Bytecode" title="Bytecode">Bytecode</a> zur Ausführung in <a href="/wiki/Webbrowser" title="Webbrowser">Webbrowsern</a>. Ziel der Entwicklung ist eine schnelle Ergänzung zu <a href="/wiki/JavaScript" title="JavaScript">JavaScript</a>, sowohl was die Ladezeiten als auch die Ausführung betrifft. Das Projekt wird von allen großen Entwicklern von <a href="/wiki/HTML-Renderer" title="HTML-Renderer">Browserengines</a>, also <a href="/wiki/Mozilla" title="Mozilla">Mozilla</a>, <a href="/wiki/Microsoft" title="Microsoft">Microsoft</a>, <a href="/wiki/Google" title="Google">Google</a> und <a href="/wiki/Apple" title="Apple">Apple</a>, betrieben<sup id="cite_ref-2" class="reference"><a href="#cite_note-2">&#91;2&#93;</a></sup><sup id="cite_ref-3" class="reference"><a href="#cite_note-3">&#91;3&#93;</a></sup> und soll gegenüber <a href="/wiki/Asm.js" title="Asm.js">asm.js</a> eine weitere Optimierung der Lade- und Ausführungszeiten erreichen. Anfangs sollen die <a href="/wiki/Programmiersprache" title="Programmiersprache">Programmiersprachen</a> <a href="/wiki/C_(Programmiersprache)" title="C (Programmiersprache)">C</a> und <a href="/wiki/C%2B%2B" title="C++">C++</a> unterstützt werden.<sup id="cite_ref-4" class="reference"><a href="#cite_note-4">&#91;4&#93;</a></sup> Auch kompilieren <a href="/wiki/Rust_(Programmiersprache)" title="Rust (Programmiersprache)">Rust</a> und <a href="/wiki/Go_(Programmiersprache)" title="Go (Programmiersprache)">Go</a> nativ nach WebAssembly<sup id="cite_ref-github-46115_5-0" class="reference"><a href="#cite_note-github-46115-5">&#91;5&#93;</a></sup><sup id="cite_ref-6" class="reference"><a href="#cite_note-6">&#91;6&#93;</a></sup><sup id="cite_ref-7" class="reference"><a href="#cite_note-7">&#91;7&#93;</a></sup>. Beim <a href="/wiki/ASP.NET_Core" class="mw-redirect" title="ASP.NET Core">Blazor-Framework</a> wird ein Laufzeitsystem als Webassembly geladen, sodass <a href="/wiki/C-Sharp" title="C-Sharp">C#</a> und <a href="/wiki/F-Sharp" title="F-Sharp">F#</a> im Browser ausgeführt werden können.<sup id="cite_ref-8" class="reference"><a href="#cite_note-8">&#91;8&#93;</a></sup><sup id="cite_ref-9" class="reference"><a href="#cite_note-9">&#91;9&#93;</a></sup>
+    </p><p>
+        Seit März 2017 wird die Version 1 standardmäßig mit <a href="/wiki/Google_Chrome" title="Google Chrome">Chrome</a>, <a href="/wiki/Mozilla_Firefox" title="Mozilla Firefox">Firefox</a>, <a href="/wiki/Microsoft_Edge" title="Microsoft Edge">Edge</a> und <a href="/wiki/WebKit" title="WebKit">Webkit</a> ausgeliefert.<sup id="cite_ref-10" class="reference"><a href="#cite_note-10">&#91;10&#93;</a></sup><sup id="cite_ref-11" class="reference"><a href="#cite_note-11">&#91;11&#93;</a></sup> Weitere Funktionen sind in Entwicklung.<sup id="cite_ref-12" class="reference"><a href="#cite_note-12">&#91;12&#93;</a></sup>
+    </p><p>
+        Das Tool <a href="/wiki/Emscripten" title="Emscripten">Emscripten</a> ist in der Lage, nahezu jeden C- und C++-Quellcode in ein WebAssembly-Modul zu kompilieren. Zusätzlich wird der notwendige JavaScript-Code zum Laden und Ausführen dieses Moduls sowie ein HTML-Dokument zur Anzeige generiert.<sup id="cite_ref-13" class="reference"><a href="#cite_note-13">&#91;13&#93;</a></sup>
+    </p><p>
+        Über eine neue Schnittstelle namens WASI soll in Zukunft WebAssembly auch außerhalb von Browsern benutzt werden können.<sup id="cite_ref-14" class="reference"><a href="#cite_note-14">&#91;14&#93;</a></sup>
+    </p><p>
+        Seit dem 5. Dezember 2019 ist WebAssembly ein offizieller Webstandard.<sup id="cite_ref-15" class="reference"><a href="#cite_note-15">&#91;15&#93;</a></sup><sup id="cite_ref-16" class="reference"><a href="#cite_note-16">&#91;16&#93;</a></sup>
+    </p>
+
+    Welcome to your new app.
+
+</div>
+
+@code {
+
+    public List<BlazorDropdownItem> DropdownItemModels = new List<BlazorDropdownItem>()
+    {
+        new BlazorDropdownItem() { Name = "do not tell anybody" },
+        new BlazorDropdownItem() { Name = "this is important action"},
+        new BlazorDropdownItem() { Name = "oh yes run anyhow but how do??"}
+    };
+
+    public void DropdownItemClicked(BlazorDropdownEvent item)
+    {
+        this.BlazorAlertsService.NewBlazorAlert(item.ClickedDropdownItem.Name);
+    }
+
+}

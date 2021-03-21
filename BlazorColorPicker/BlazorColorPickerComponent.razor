@@ -1,0 +1,53 @@
+﻿@namespace BlazorColorPicker
+@inherits BlazorColorPickerComponentBase
+
+<div class="blazor-color-picker">
+
+    @if (ColorPickerType == BlazorColorPickerType.HTML5ColorPicker)
+    {
+        <input type="color" value="@ContextColor" @onchange="@((ChangeEventArgs e) => ContextColor_OnChange(e.Value.ToString()))" class="w-100" />
+    }
+
+    @if (ColorPickerType == BlazorColorPickerType.CustomColorPicker)
+    {
+        <div class="custom-color-picker">
+
+            <button type="button" @onclick="() => ToggleCustomColorPicker()" class="btn btn-sm w-100" style="background-color: @ContextColor;">
+
+                <span class="oi oi-chevron-bottom"></span>
+
+            </button>
+
+            @if(ShowCustomColorPicker == true)
+            {
+                <div class="position-relative">
+                    <div class="position-absolute" style="top: 0px; left: 0px;">
+                        <div class="d-flex flex-wrap" style="max-width: 420px;">
+
+                            @foreach (var dic in ColorSet)
+                            {
+                                <div class="p-0" style="width: 42px; height: 42px;">
+                                    <button type="button" @onclick="() => ColorSetItem_OnClicked(dic)" class="btn btn-sm w-100 h-100 rounded-0" id="@dic.Key" style="background-color: @dic.Value.itemcolor; border: 1px solid darkgray;">
+
+                                        @if (dic.Value.itemchecked)
+                                        {
+                                            <span class="oi oi-check" style="font-size: 1.8rem;"></span>
+                                        }
+
+                                    </button>
+                                </div>
+                            }
+
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+
+</div>
+
+@code {
+
+}

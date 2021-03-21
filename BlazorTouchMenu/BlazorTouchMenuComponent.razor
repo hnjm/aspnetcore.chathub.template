@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Routing
+
+@*
+    <button class="btn btn-light position-absolute" @onclick="ToggleNavMenu" style="top: 10px; right: 10px;">
+        <span class="oi oi-menu"></span>
+    </button>
+*@
+
+<div id="blazortouchmenuid" class="sidebar @NavMenuCssClass">
+
+    <div class="top-row pl-4 navbar navbar-dark">
+        <a class="navbar-brand" href="">anyways webassembly</a>
+    </div>
+
+    <div>
+        <ul class="nav flex-column pt-3">
+
+            @foreach (var MenuItemModel in MenuItemModels)
+            {
+                <li class="nav-item px-3 py-1">
+                    <NavLink class="nav-link" href="@MenuItemModel.Href" Match="@MenuItemModel.NavLinkMatch">
+                        <span class="oi @MenuItemModel.Icon" aria-hidden="true"></span> @MenuItemModel.Name
+                    </NavLink>
+                </li>
+            }
+
+        </ul>
+    </div>
+
+</div>
+
+@code {
+
+    [Parameter] public List<BlazorTouchMenuItemModel> MenuItemModels { get; set; }
+
+    private bool showNavMenu = false;
+
+    private string NavMenuCssClass => showNavMenu ? "d-block" : "d-none";
+
+    private void ToggleNavMenu()
+    {
+        showNavMenu = !showNavMenu;
+    }
+}

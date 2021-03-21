@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>BlazorWasm</title>
+    <base href="/" />
+    <link href="css/bootstrap/chat-hub-generated-bootstrap.min.css" rel="stylesheet" />
+    <link href="css/app.css" rel="stylesheet" />
+    <link href="BlazorWasm.styles.css" rel="stylesheet" />
+
+    <link href="_content/BlazorTouchMenu/css/blazortouchmenu.min.css" rel="stylesheet" />
+    <link href="_content/BlazorAlerts/css/blazoralerts.min.css" rel="stylesheet" />
+
+    <link href="manifest.json" rel="manifest" />
+    <link rel="apple-touch-icon" sizes="512x512" href="icon-512.png" />
+
+    <style type="text/css">
+
+        html, body {
+            height: 100vh !important;
+        }
+
+    </style>
+
+</head>
+
+<body data-swipe-threshold="100" data-swipe-timeout="250">
+
+    <div id="app" class="h-100">Loading...</div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script>navigator.serviceWorker.register('service-worker.js');</script>
+
+    <script src="_content/BlazorTouchMenu/js/blazortouchmenu.min.js"></script>
+
+</body>
+
+</html>

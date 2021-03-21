@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <LangVersion>8.0</LangVersion>
+    <RazorLangVersion>3.0</RazorLangVersion>
+    <AssemblyName>Oqtane.ChatHubs.Shared.Oqtane</AssemblyName>
+    <OutputType>Library</OutputType>  
+    <Version>1.0.0</Version>
+    <Product>Oqtane.ChatHubs</Product>
+    <Authors>Benjamin Strohmann</Authors>
+    <Company>Benjamin Strohmann</Company>
+    <Description>Just another ChatHub Module for the Oqtane Framework</Description>
+    <Copyright>Benjamin Strohmann</Copyright>    
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Oqtane.Shared" Version="2.0.0" />
+  </ItemGroup>
+
+</Project>

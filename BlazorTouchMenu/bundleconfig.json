@@ -1,0 +1,23 @@
+[
+  {
+    "outputFileName": "wwwroot/css/blazortouchmenu.min.css",
+    "inputFiles": [
+      "blazortouchmenu.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/blazortouchmenu.min.js",
+    "inputFiles": [
+      "swiped-events.js",
+      "blazortouchmenu.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    }
+  }
+]

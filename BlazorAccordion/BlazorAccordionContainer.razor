@@ -1,0 +1,17 @@
+﻿@namespace BlazorAccordion
+
+@inherits BlazorAccordionBase
+
+<CascadingValue Value="this">
+
+    <div class="accordion" id="@Id">
+
+        @ChildContent
+
+    </div>
+
+</CascadingValue>
+
+@code {
+
+}

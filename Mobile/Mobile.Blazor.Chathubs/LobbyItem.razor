@@ -1,0 +1,43 @@
+﻿@namespace Mobile.Blazor.Chathubs
+
+@using Oqtane.Shared.Models
+@using Microsoft.AspNetCore.SignalR
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.AspNetCore.Http.Connections
+
+<StackLayout Orientation="StackOrientation.Horizontal">
+
+    <Image class=""
+           WidthRequest="42"
+           BackgroundColor="Color.Transparent"
+           HorizontalOptions="LayoutOptions.Start"
+           VerticalOptions="LayoutOptions.CenterAndExpand"
+           Source="@(new FileImageSource { File = "chat_room_image_rounded_corners.png" })" />
+
+    <Label Text="@Item.Title" FontAttributes="FontAttributes.Bold" HorizontalOptions="LayoutOptions.StartAndExpand" VerticalOptions="LayoutOptions.CenterAndExpand" />
+    <Button Text="Enter" OnClick="async () => await EnterRoom_Clicked(Item.Id)" HorizontalOptions="LayoutOptions.End" VerticalOptions="LayoutOptions.CenterAndExpand" />
+
+</StackLayout>
+
+@code {
+
+    [Inject]
+    public ChatHubService ChatHubService { get; set; }
+
+    [Parameter]
+    public ChatHubRoom Item { get; set; }
+
+    public async Task EnterRoom_Clicked(int roomId)
+    {
+        if (ChatHubService.Connection?.State == HubConnectionState.Connected)
+        {
+            await this.ChatHubService.EnterChatRoom(roomId);
+        }
+    }
+
+    public async Task LeaveRoom_Clicked(int roomId)
+    {
+        await this.ChatHubService.LeaveChatRoom(roomId);
+    }
+
+}

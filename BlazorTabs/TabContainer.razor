@@ -1,0 +1,33 @@
+﻿@namespace BlazorTabs
+@inherits TabContainerBase
+
+<style type="text/css">
+
+    .blazor-tab-nav::-webkit-scrollbar {
+        height: 8px;
+        background-color: grey;
+    }
+    .blazor-tab-nav {
+        scrollbar-width: thin;
+    }
+</style>
+
+<div class="blazor-tabs">
+
+    <CascadingValue Value=this>
+
+        <ul class="blazor-tab-nav nav nav-tabs d-flex flex-nowrap overflow-auto">
+            @ChildContent
+        </ul>
+
+    </CascadingValue>
+
+    <div class="nav-tabs-body">
+        @ActiveTab?.TabContent
+    </div>
+
+</div>
+
+@code {
+
+}

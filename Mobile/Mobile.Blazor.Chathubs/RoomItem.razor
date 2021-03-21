@@ -1,0 +1,88 @@
+﻿@namespace Mobile.Blazor.Chathubs
+
+@using Oqtane.Shared.Models
+@using Microsoft.AspNetCore.SignalR
+@using Microsoft.AspNetCore.SignalR.Client
+@using Microsoft.AspNetCore.Http.Connections
+
+<StackLayout Orientation="StackOrientation.Horizontal">
+
+    <Image class=""
+           WidthRequest="42"
+           BackgroundColor="Color.Transparent"
+           HorizontalOptions="LayoutOptions.Start"
+           VerticalOptions="LayoutOptions.CenterAndExpand"
+           Source="@(new FileImageSource { File = "chat_room_image_rounded_corners.png" })" />
+
+    <Label Text="@Item.Title" FontAttributes="FontAttributes.Bold" HorizontalOptions="LayoutOptions.StartAndExpand" VerticalOptions="LayoutOptions.CenterAndExpand" />
+    <Button Text="Join" OnClick="async () => OnRoomModalOpened()" />
+    <Button Text="Leave" OnClick="async () => await LeaveRoom_Clicked(Item.Id)" />
+
+</StackLayout>
+
+<ModalContainer @ref="RoomModalContainer" OnClosed="async () => OnRoomModalClosed()">
+
+    <ContentPage>
+        
+        <StackLayout>
+
+                <ScrollView VerticalOptions="LayoutOptions.FillAndExpand">
+                    <StackLayout Margin="0" Padding="10" BackgroundColor="Color.LightGray">
+
+                        <MessageItems room="@Item"></MessageItems>
+
+                    </StackLayout>
+                </ScrollView>
+
+                <StackLayout Orientation="StackOrientation.Horizontal" VerticalOptions="LayoutOptions.End" Margin="0" Padding="10" BackgroundColor="Color.LightGoldenrodYellow">
+
+                    <Entry @bind-Text="Item.MessageInput"
+                           Placeholder="Type your message here"
+                           OnCompleted="() => SendMessage_Clicked(Item.MessageInput, Item)"
+                           IsEnabled="(!isEnabled)"
+                           HorizontalOptions="LayoutOptions.FillAndExpand" />
+
+                    <Button Text="Send" OnClick="() => SendMessage_Clicked(Item.MessageInput, Item)" />
+
+                </StackLayout>
+
+        </StackLayout>
+
+    </ContentPage>
+
+</ModalContainer>
+
+@code {
+
+    [Inject]
+    public ChatHubService ChatHubService { get; set; }
+
+    [Parameter]
+    public ChatHubRoom Item { get; set; }
+
+    bool isEnabled;
+
+    public void SendMessage_Clicked(string messageInput, ChatHubRoom room)
+    {
+        this.ChatHubService.SendMessage(messageInput, room.Id, Constants.ModuleId);
+        room.MessageInput = string.Empty;
+    }
+
+    public async Task LeaveRoom_Clicked(int roomId)
+    {
+        await this.ChatHubService.LeaveChatRoom(roomId);
+    }
+
+    public ModalContainer RoomModalContainer { get; set; }
+
+    public async void OnRoomModalOpened()
+    {       
+        RoomModalContainer.ShowDialog();
+    }
+
+    public async void OnRoomModalClosed()
+    {
+        RoomModalContainer.FinishClosingDialog();
+    }
+
+}

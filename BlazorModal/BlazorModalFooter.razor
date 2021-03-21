@@ -1,0 +1,10 @@
+﻿@namespace BlazorModal
+@using Microsoft.AspNetCore.Components;
+
+@ChildContent
+
+@code {
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+}

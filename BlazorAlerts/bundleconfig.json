@@ -1,0 +1,22 @@
+[
+  {
+    "outputFileName": "wwwroot/css/blazoralerts.min.css",
+    "inputFiles": [
+      "blazoralerts.css"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/blazoralerts.min.js",
+    "inputFiles": [
+      "blazoralerts.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    }
+  }
+]

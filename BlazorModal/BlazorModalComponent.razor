@@ -1,0 +1,23 @@
+﻿@namespace BlazorModal
+@inherits BlazorModalBase
+@using Microsoft.AspNetCore.Components;
+
+<div id="@ElementId" class="modal show fade" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                @BlazorModalHeader
+            </div>
+            <div class="modal-body">
+                @BlazorModalBody
+            </div>
+            <div class="modal-footer">
+                @BlazorModalFooter
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+
+}

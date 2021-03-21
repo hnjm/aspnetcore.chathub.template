@@ -1,0 +1,65 @@
+﻿@inherits ChatBase
+
+@using Microsoft.AspNetCore.SignalR.Client
+
+<ContentView>
+
+    <StackLayout Margin="new Thickness(20)">
+
+        <GuestLogin @ref="GuestLoginReference" ChatComponentReference="@this"></GuestLogin>
+
+        <Frame BorderColor="Color.Purple" CornerRadius="0" Margin="1" Padding="10" BackgroundColor="Color.MediumPurple" IsVisible="ChatHubService.Connection?.State == HubConnectionState.Connected">
+            <ScrollView>
+                <StackLayout>
+
+                    @if (ChatHubService.Rooms == null || !ChatHubService.Rooms.Any())
+                    {
+                        <StackLayout Orientation="StackOrientation.Horizontal">
+                            <Label Text="Waiting for you..." VerticalOptions="LayoutOptions.CenterAndExpand" />
+                            <ActivityIndicator Color="Color.Purple" IsRunning="true" />
+                        </StackLayout>
+                    }
+                    else
+                    {
+                        foreach (var item in ChatHubService.Rooms)
+                        {
+                            <RoomItem Item="item" />
+                        }
+                    }
+
+                </StackLayout>
+            </ScrollView>
+        </Frame>
+
+        <Frame BorderColor="Color.MediumBlue" CornerRadius="0" Margin="1" Padding="10" BackgroundColor="Color.LightBlue">
+            <ScrollView>
+                <StackLayout>
+
+                    @if (ChatHubService.Lobbies == null || !ChatHubService.Lobbies.Any())
+                    {
+                        <StackLayout Orientation="StackOrientation.Horizontal">
+                            <Label Text="Loading..." VerticalOptions="LayoutOptions.CenterAndExpand" />
+                            <ActivityIndicator Color="Color.Purple" IsRunning="true" />
+                        </StackLayout>
+                    }
+                    else
+                    {
+                        foreach (var item in ChatHubService.Lobbies)
+                        {
+                            <LobbyItem Item="item" />
+                        }
+                    }
+
+                </StackLayout>
+            </ScrollView>
+        </Frame>
+
+    </StackLayout>
+
+    <ExceptionModal @ref="ExceptionModalReference" Message="@ExceptionMessage"></ExceptionModal>
+
+</ContentView>
+
+@code {
+
+}

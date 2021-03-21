@@ -1,0 +1,55 @@
+﻿@namespace Oqtane.ChatHubs
+
+@inherits SettingsModalBase
+
+@using Microsoft.AspNetCore.Components.Web
+@using BlazorDraggableList
+@using Oqtane.Shared.Models
+
+<MatDialog @ref="SettingsDialog" @bind-IsOpen="DialogIsOpen">
+
+    <MatDialogTitle>Account/Settings</MatDialogTitle>
+
+    <MatDialogContent>
+
+        <MatTabGroup>
+
+            <MatTab>
+                <LabelContent>Account Info</LabelContent>
+                <ChildContent>
+
+                    <div class="p-sm-3">
+
+                        <p class="lead">Here a little overview of all current related userdata activities for guests and registered users.</p>
+
+                        <div class="form-group">
+                            <label for="displayname">Username</label>
+                            <input class="form-control" type="text" id="displayname" placeholder="@ChatHubService.ConnectedUser?.DisplayName" readonly>
+                        </div>
+
+                        @if(ChatHubService.ConnectedUser != null && ChatHubService.ConnectedUser.Connections != null) {
+
+                            <BlazorDraggableListComponent Items="ChatHubService.ConnectedUser.Connections" Id="DraggableConnectionsElementId" Class="d-flex flex-column form-group">
+                                <BlazorDraggableListItem>
+                                    <div class="form-group">
+                                        <label for="displayname">Connected since @context.CreatedOn.ToLongDateString() @context.CreatedOn.ToLongTimeString()</label>
+                                        <input class="form-control" type="text" placeholder="@context.ConnectionId" readonly>
+                                    </div>
+                                </BlazorDraggableListItem>
+                            </BlazorDraggableListComponent>
+                        }
+
+                    </div>
+
+                </ChildContent>
+            </MatTab>
+
+        </MatTabGroup>
+
+        <div class="my-3">
+            <button type="button" class="btn btn-sm btn-primary" @onclick="() => CloseDialog()">Close</button>
+        </div>
+
+    </MatDialogContent>
+
+</MatDialog>

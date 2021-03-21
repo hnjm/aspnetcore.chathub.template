@@ -1,0 +1,11 @@
+﻿@namespace BlazorAccordion
+
+@ChildContent
+
+@code {
+
+    [CascadingParameter] public BlazorAccordionItem AccordionItem { get; set; }
+
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+}

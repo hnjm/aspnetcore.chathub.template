@@ -1,0 +1,14 @@
+﻿@namespace BlazorTabs
+@using Microsoft.AspNetCore.Components.Web
+
+@ChildContent
+
+@code {
+
+    [CascadingParameter]
+    public ITabItem TabItem { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+}

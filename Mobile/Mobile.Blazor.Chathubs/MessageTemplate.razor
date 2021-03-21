@@ -1,0 +1,83 @@
+﻿@namespace Mobile.Blazor.Chathubs
+
+@using Oqtane.Shared.Enums
+@using Oqtane.Shared.Models
+
+@foreach (ChatHubMessage message in Messages)
+{
+
+    var messageType = (ChatHubMessageType)Enum.ToObject(typeof(ChatHubMessageType), Enum.Parse(typeof(ChatHubMessageType), message.Type));
+    @switch (messageType)
+    {
+        case ChatHubMessageType.Guest:
+            @GuestTemplate(message)
+            break;
+        case ChatHubMessageType.User:
+            @UserTemplate(message)
+            break;
+        case ChatHubMessageType.Admin:
+            @AdminTemplate(message)
+            break;
+        case ChatHubMessageType.System:
+            @SystemTemplate(message)
+            break;
+        case ChatHubMessageType.Whisper:
+            @WhisperTemplate(message)
+            break;
+        case ChatHubMessageType.Me:
+            @MeTemplate(message)
+            break;
+        case ChatHubMessageType.Enter_Leave:
+            @EnterLeaveTemplate(message)
+            break;
+        case ChatHubMessageType.Connect_Disconnect:
+            @ConnectDisconnectTemplate(message)
+            break;
+        case ChatHubMessageType.Image:
+            @ImageTemplate(message)
+            break;
+        case ChatHubMessageType.Commands:
+            @CommandsTemplate(message)
+            break;
+        default:
+            @GuestTemplate(message)
+            break;
+    }
+}
+
+@code {
+
+    [Parameter]
+    public RenderFragment<ChatHubMessage> GuestTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<ChatHubMessage> UserTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<ChatHubMessage> AdminTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<ChatHubMessage> SystemTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<ChatHubMessage> WhisperTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<ChatHubMessage> MeTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<ChatHubMessage> EnterLeaveTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<ChatHubMessage> ConnectDisconnectTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<ChatHubMessage> ImageTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<ChatHubMessage> CommandsTemplate { get; set; }
+
+    [Parameter]
+    public IOrderedEnumerable<ChatHubMessage> Messages { get; set; }
+
+}

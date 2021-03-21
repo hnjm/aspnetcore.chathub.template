@@ -1,0 +1,69 @@
+﻿@namespace BlazorAlerts
+
+@foreach(var item in Items)
+{
+    <div @key="item" class="blazoralerts-item" style="position: @item.Position.ToString().ToLower();">
+        <div class="blazoralerts-item-header">
+            @RenderHeadline(item.Headline)
+            @RenderCloseButton(item)
+        </div>
+        <div class="blazoralerts-item-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-3">@RenderImage(item)</div>
+                    <div class="col-sm-9">@RenderMessage(item)</div>
+                </div>
+
+                @if (item.ConfirmDialog == false)
+                {
+                    <div class="row">
+                        <div class="col-sm-6 offset-sm-3">
+                            @RenderOkButton(item)
+                        </div>
+                    </div>
+                }
+                @if (item.ConfirmDialog == true)
+                {
+                    <div class="row">
+                        <div class="col-sm-5 offset-sm-2 px-1">
+                            @RenderConfirmButton(item)
+                        </div>
+                        <div class="col-sm-5 px-1">
+                            @RenderDenyButton(item)
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+        </div>
+    </div>
+}
+
+@code {
+
+    [Parameter]
+    public RenderFragment<string> RenderHeadline { get; set; }
+
+    [Parameter]
+    public RenderFragment<BlazorAlertsModel> RenderCloseButton { get; set; }
+
+    [Parameter]
+    public RenderFragment<BlazorAlertsModel> RenderImage { get; set; }
+
+    [Parameter]
+    public RenderFragment<BlazorAlertsModel> RenderMessage { get; set; }
+
+    [Parameter]
+    public RenderFragment<BlazorAlertsModel> RenderOkButton { get; set; }
+
+    [Parameter]
+    public RenderFragment<BlazorAlertsModel> RenderConfirmButton { get; set; }
+
+    [Parameter]
+    public RenderFragment<BlazorAlertsModel> RenderDenyButton { get; set; }
+
+    [Parameter]
+    public IReadOnlyList<BlazorAlertsModel> Items { get; set; }
+
+}

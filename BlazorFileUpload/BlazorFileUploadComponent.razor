@@ -1,0 +1,67 @@
+﻿@namespace BlazorFileUpload
+
+@inherits BlazorFileUploadBase
+
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Forms
+
+<style>
+
+    .blazor-file-upload-dropzone {
+        width: 100%;
+        height: 100px;
+        background-color: rgba(255,216,0,0.3);
+        border: 3px dashed #ff006e;
+    }
+
+</style>
+
+<div class="my-1" style="overflow: hidden;">
+    <InputFile OnChange="@OnBlazorFileUploadChange" id="@InputFileId" multiple />
+</div>
+
+<div class="w-100 my-1">
+    <div id="@DropzoneElementId" class="blazor-file-upload-dropzone d-flex align-items-center justify-content-center px-3">
+
+        <span class="text-white bg-primary p-sm-2">
+            <small class="oi oi-data-transfer-download"></small> <small>drag and drop files here</small>
+        </span>
+
+    </div>
+</div>
+
+@if (FileUploadModels.Count > 0)
+{
+    <div class="progress my-1" style="height: 3px;">
+        <div class="progress-bar bg-success" role="progressbar" style="width: @(progresswidth)%" aria-valuenow="@(progresswidth)" aria-valuemin="0" aria-valuemax="100"></div>
+    </div>
+
+    <div class="d-flex w-100 my-1">
+
+        @foreach (var dicitem in FileUploadModels)
+        {
+            var kilobytes = dicitem.Value.Base64ImageUrl.Length * 8 / 6 / 1024;
+
+            <div class="position-relative">
+                <img class="rounded m-1" src="@dicitem.Value.Base64ImageUrl" height="72" />
+                <button type="button" class="btn btn-sm btn-link bg-dark text-white position-absolute" style="top: 5px; right: 5px; text-shadow: 1px 1px #000;" @onclick="() => RemoveThumbnail_Clicked(dicitem.Key)">
+                    <span class="oi oi-x"></span>
+                </button>
+            </div>
+        }
+
+    </div>
+
+    <button type="button" class="btn btn-sm btn-primary" @onclick="async () => UploadImages_Clicked()">
+        Upload Images
+    </button>
+}
+
+<div class="alert alert-info my-1">
+    Max. 3 Images / Upload.
+</div>
+
+@code {
+
+}
