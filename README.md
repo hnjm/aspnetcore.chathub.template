@@ -28,6 +28,9 @@ The oqtane chathubs module allows developers to code and run realtime chat. Post
 
 #### Edit startup.cs configure services methode
 ```C#
+ services.AddMvc().AddNewtonsoftJson(
+    options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
 services.AddScoped<VideoService, VideoService>();
 services.AddScoped<BlazorAlertsService, BlazorAlertsService>();
 services.AddScoped<BlazorDraggableListService, BlazorDraggableListService>();
@@ -99,7 +102,7 @@ else if (segments[0] == "chathub")
 
 #### Demo Site
 
-Demo Website [Link](https://anyways.tv/).
+Demo Website [Link](https://sub.anyways.tv/).
 
 #### Support our office
 Anyways Corporation

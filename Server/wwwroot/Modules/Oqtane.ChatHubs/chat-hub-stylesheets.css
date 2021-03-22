@@ -23,7 +23,12 @@ body {
         background-color: #464646;
     }
 
+    body .app-menu .nav-item {
+        padding-bottom: 0rem;
+    }
+
 @media (max-width: 767px) {
+
     body main nav.navbar {
         padding: 0.25rem 0rem !important;
     }
