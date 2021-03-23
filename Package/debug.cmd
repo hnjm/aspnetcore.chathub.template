@@ -26,7 +26,13 @@ XCOPY "..\BlazorColorPicker\bin\Debug\net5.0\BlazorColorPicker.dll" "..\..\oqtan
 XCOPY "..\BlazorColorPicker\bin\Debug\net5.0\BlazorColorPicker.pdb" "..\..\oqtane.framework\Oqtane.Server\bin\Debug\net5.0\" /Y
 XCOPY "..\BlazorVideo\bin\Debug\net5.0\BlazorVideo.dll" "..\..\oqtane.framework\Oqtane.Server\bin\Debug\net5.0\" /Y
 XCOPY "..\BlazorVideo\bin\Debug\net5.0\BlazorVideo.pdb" "..\..\oqtane.framework\Oqtane.Server\bin\Debug\net5.0\" /Y
+XCOPY "..\BlazorBrowserResize\bin\Debug\net5.0\BlazorBrowserResize.dll" "..\..\oqtane.framework\Oqtane.Server\bin\Debug\net5.0\" /Y
+XCOPY "..\BlazorBrowserResize\bin\Debug\net5.0\BlazorBrowserResize.pdb" "..\..\oqtane.framework\Oqtane.Server\bin\Debug\net5.0\" /Y
+
 XCOPY "..\Server\wwwroot\Modules\Oqtane.ChatHubs\*" "..\..\oqtane.framework\Oqtane.Server\wwwroot\Modules\Oqtane.ChatHubs\" /Y /S /I
 
 XCOPY "..\BlazorAlerts\wwwroot\*" "..\..\oqtane.framework\Oqtane.Server\wwwroot\Modules\Oqtane.ChatHubs\" /Y /S /I
 XCOPY "..\BlazorVideo\wwwroot\*" "..\..\oqtane.framework\Oqtane.Server\wwwroot\_content\BlazorVideo\" /Y /S /I
+XCOPY "..\BlazorBrowserResize\wwwroot\*" "..\..\oqtane.framework\Oqtane.Server\wwwroot\_content\BlazorBrowserResize\" /Y /S /I
+XCOPY "..\BlazorFileUpload\wwwroot\*" "..\..\oqtane.framework\Oqtane.Server\wwwroot\_content\BlazorFileUpload\" /Y /S /I
+XCOPY "..\BlazorDraggableList\wwwroot\*" "..\..\oqtane.framework\Oqtane.Server\wwwroot\_content\BlazorDraggableList\" /Y /S /I

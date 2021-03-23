@@ -17,6 +17,14 @@ namespace BlazorVideo
         public BlazorVideoService(IJSRuntime jsRuntime)
         {
             this._jSRuntime = jsRuntime;
+            this.BlazorVideoServiceExtension = new BlazorVideoServiceExtension();
+            this._dotnetobjectref = DotNetObjectReference.Create(this.BlazorVideoServiceExtension);
+        }
+
+        public async Task InitBlazorVideo()
+        {
+            this._moduleTask = await this._jSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorVideo/blazorvideojsinterop.js");
+            this._blazorvideomap = await this._moduleTask.InvokeAsync<IJSObjectReference>("initblazorvideo", this._dotnetobjectref);
         }
 
         public async ValueTask NewVideo(string id)
@@ -26,8 +34,8 @@ namespace BlazorVideo
 
         public async ValueTask DisposeAsync()
         {
-            await this._blazorvideomap.DisposeAsync();
-            await this._moduleTask.DisposeAsync();            
+            //await this._blazorvideomap.DisposeAsync();
+            //await this._moduleTask.DisposeAsync();
         }
     }
 

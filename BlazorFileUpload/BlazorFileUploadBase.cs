@@ -26,21 +26,13 @@ namespace BlazorFileUpload
         public float progressnow { get; set; }
         public float progresstotal { get; set; }
 
-        protected override Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
+            await this.BlazorFileUploadService.InitFileUploadDropzone(this.InputFileId, this.DropzoneElementId);
             this.BlazorFileUploadService.BlazorFileUploadServiceExtension.OnDropEvent += OnFileUploadDropEventExecute;
             this.OnUploadImagesEvent += OnUploadImagesExecute;
-            return base.OnInitializedAsync();
-        }
 
-        protected override Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                this.BlazorFileUploadService.InitFileUploadDropzone(this.InputFileId, this.DropzoneElementId);
-            }
-
-            return base.OnAfterRenderAsync(firstRender);
+            await base.OnInitializedAsync();
         }
 
         public async Task OnBlazorFileUploadChange(InputFileChangeEventArgs e)

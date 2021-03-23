@@ -58,6 +58,8 @@
     <file src="..\BlazorColorPicker\bin\Release\net5.0\BlazorColorPicker.pdb" target="lib\net5.0" />
     <file src="..\BlazorVideo\bin\Release\net5.0\BlazorVideo.dll" target="lib\net5.0" />
     <file src="..\BlazorVideo\bin\Release\net5.0\BlazorVideo.pdb" target="lib\net5.0" />
+    <file src="..\BlazorBrowserResize\bin\Release\net5.0\BlazorBrowserResize.dll" target="lib\net5.0" />
+    <file src="..\BlazorBrowserResize\bin\Release\net5.0\BlazorBrowserResize.pdb" target="lib\net5.0" />
     <file src="..\Server\wwwroot\**\*.*" target="wwwroot" />
     <file src="..\BlazorAlerts\wwwroot\**\*.*" target="wwwroot" />
   </files>

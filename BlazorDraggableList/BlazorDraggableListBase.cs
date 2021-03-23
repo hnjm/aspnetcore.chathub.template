@@ -15,20 +15,12 @@ namespace BlazorDraggableList
         [Parameter] public string Class { get; set; }
         [Parameter] public RenderFragment<TItemGeneric> BlazorDraggableListItem { get; set; }
 
-        protected override Task OnInitializedAsync()
+        protected override async Task OnInitializedAsync()
         {
+            await this.BlazorDraggableListService.InitDraggableList(this.Id);
             this.BlazorDraggableListService.BlazorDraggableListServiceExtension.OnDropEvent += OnDropEventExecute;
-            return base.OnInitializedAsync();
-        }
 
-        protected override Task OnAfterRenderAsync(bool firstRender)
-        {
-            if(firstRender)
-            {
-                this.BlazorDraggableListService.InitDraggable(this.Id);
-            }
-            
-            return base.OnAfterRenderAsync(firstRender);
+            await base.OnInitializedAsync();
         }
 
         private void OnDropEventExecute(object sender, BlazorDraggableListEvent e)
@@ -42,7 +34,7 @@ namespace BlazorDraggableList
 
         public void Dispose()
         {
-            BlazorDraggableListService.BlazorDraggableListServiceExtension.OnDropEvent -= OnDropEventExecute;
+            this.BlazorDraggableListService.BlazorDraggableListServiceExtension.OnDropEvent -= OnDropEventExecute;
         }
     }
 

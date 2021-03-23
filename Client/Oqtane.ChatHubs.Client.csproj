@@ -14,6 +14,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Services\BrowserResizeService.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="BlazorStrap" Version="1.3.3" />
     <PackageReference Include="MatBlazor" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.0" />
@@ -32,6 +36,7 @@
   <ItemGroup>
     <ProjectReference Include="..\BlazorAccordion\BlazorAccordion.csproj" />
     <ProjectReference Include="..\BlazorAlerts\BlazorAlerts.csproj" />
+    <ProjectReference Include="..\BlazorBrowserResize\BlazorBrowserResize.csproj" />
     <ProjectReference Include="..\BlazorColorPicker\BlazorColorPicker.csproj" />
     <ProjectReference Include="..\BlazorDraggableList\BlazorDraggableList.csproj" />
     <ProjectReference Include="..\BlazorFileUpload\BlazorFileUpload.csproj" />

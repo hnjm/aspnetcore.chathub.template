@@ -1,5 +1,4 @@
 ﻿@namespace Oqtane.ChatHubs
-
 @inherits IndexBase
 
 @using Microsoft.AspNetCore.Components.Authorization
@@ -326,6 +325,8 @@
                                     </WindowTitle>
                                     <WindowLivestream>
                                         
+                                        <BlazorVideoComponent Id="@room.Id.ToString()"></BlazorVideoComponent>
+
                                         <VideoComponent ChatHubRoom="@room" ItemIndex="@room_index"></VideoComponent>
 
                                     </WindowLivestream>

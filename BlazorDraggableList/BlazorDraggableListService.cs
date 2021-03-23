@@ -1,6 +1,7 @@
 ﻿using Microsoft.JSInterop;
 using Oqtane.Shared.Models;
 using System;
+using System.Threading.Tasks;
 
 namespace BlazorDraggableList
 {
@@ -8,6 +9,8 @@ namespace BlazorDraggableList
     {
 
         private readonly IJSRuntime JSRuntime;
+        public IJSObjectReference Module;
+        public IJSObjectReference DraggableListMap;
 
         public JsRuntimeObjectRef __jsRuntimeObjectRef { get; set; }
 
@@ -18,17 +21,14 @@ namespace BlazorDraggableList
         public BlazorDraggableListService(IJSRuntime jsRuntime)
         {
             this.JSRuntime = jsRuntime;
-
-            this.BlazorDraggableListServiceExtension = new BlazorDraggableListServiceExtension(this);
+            this.BlazorDraggableListServiceExtension = new BlazorDraggableListServiceExtension();
             this.dotNetObjectReference = DotNetObjectReference.Create(this.BlazorDraggableListServiceExtension);
         }
 
-        public void InitDraggable(string elementId)
+        public async Task InitDraggableList(string elementId)
         {
-            if (this.__jsRuntimeObjectRef != null)
-            {
-                this.JSRuntime.InvokeVoidAsync("__obj.initdraggable", elementId, __jsRuntimeObjectRef);
-            }
+            this.Module = await this.JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorDraggableList/blazordraggablelistjsinterop.js");
+            this.DraggableListMap = await this.Module.InvokeAsync<IJSObjectReference>("initblazordraggablelist", this.dotNetObjectReference, elementId);
         }
 
     }
@@ -36,14 +36,7 @@ namespace BlazorDraggableList
     public class BlazorDraggableListServiceExtension
     {
 
-        private BlazorDraggableListService BlazorDraggableListService { get; set; }
-
         public event EventHandler<BlazorDraggableListEvent> OnDropEvent;
-
-        public BlazorDraggableListServiceExtension(BlazorDraggableListService blazorDraggableListService)
-        {
-            this.BlazorDraggableListService = blazorDraggableListService;
-        }
 
         [JSInvokable("OnDrop")]
         public void OnDrop(int oldIndex, int newIndex, string elementId)

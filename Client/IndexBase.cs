@@ -20,6 +20,7 @@ using System.Net;
 using BlazorDraggableList;
 using BlazorFileUpload;
 using Oqtane.Shared.Extensions;
+using BlazorBrowserResize;
 
 namespace Oqtane.ChatHubs
 {
@@ -34,7 +35,7 @@ namespace Oqtane.ChatHubs
         [Inject] protected BlazorAlertsService BlazorAlertsService { get; set; }
         [Inject] protected IChatHubService ChatHubService { get; set; }
         [Inject] protected VideoService VideoService { get; set; }
-        [Inject] protected BrowserResizeService BrowserResizeService { get; set; }
+        [Inject] protected BlazorBrowserResizeService BrowserResizeService { get; set; }
         [Inject] protected ScrollService ScrollService { get; set; }
         [Inject] protected CookieService CookieService { get; set; }
         [Inject] protected BlazorDraggableListService BlazorDraggableListService { get; set; }
@@ -67,13 +68,71 @@ namespace Oqtane.ChatHubs
             
         }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
+            await this.BrowserResizeService.InitBrowserResizeService();
+
+            this.BrowserResizeService.BrowserResizeServiceExtension.OnResize += BrowserHasResized;
             this.BlazorDraggableListService.BlazorDraggableListServiceExtension.OnDropEvent += OnDraggableListDropEventExecute;
-            this.BrowserResizeService.OnResize += BrowserHasResized;
+
             this.ChatHubService.OnUpdateUI += (object sender, EventArgs e) => UpdateUIStateHasChanged();
 
-            base.OnInitialized();
+            await base.OnInitializedAsync();
+        }
+
+        protected override async Task OnParametersSetAsync()
+        {
+            try
+            {
+                this.ChatHubService.ModuleId = ModuleState.ModuleId;
+
+                this.settings = await this.SettingService.GetModuleSettingsAsync(ModuleState.ModuleId);
+                maxUserNameCharacters = int.Parse(this.SettingService.GetSetting(settings, "MaxUserNameCharacters", "500"));
+
+                if (PageState.QueryString.ContainsKey("moduleid") && PageState.QueryString.ContainsKey("roomid") && int.Parse(PageState.QueryString["moduleid"]) == ModuleState.ModuleId)
+                {
+                    this.contextRoom = await this.ChatHubService.GetChatHubRoomAsync(int.Parse(PageState.QueryString["roomid"]), ModuleState.ModuleId);
+                }
+                else
+                {
+                    await this.ChatHubService.GetLobbyRooms(ModuleState.ModuleId);
+                }
+            }
+            catch (Exception ex)
+            {
+                await logger.LogError(ex, "Error Loading Rooms {Error}", ex.Message);
+                ModuleInstance.AddModuleMessage("Error Loading Rooms", MessageType.Error);
+            }
+
+            await base.OnParametersSetAsync();
+        }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+
+            if (firstRender)
+            {
+                string hostname = new Uri(NavigationManager.BaseUri).Host;
+                this.ChatHubService.IdentityCookie = new Cookie(".AspNetCore.Identity.Application", await this.CookieService.GetCookieAsync(".AspNetCore.Identity.Application"), "/", hostname);
+
+                /*
+                JsRuntimeObjectRef objref = await this.JSRuntime.InvokeAsync<JsRuntimeObjectRef>("__init", this.VideoService.dotNetObjectReference, this.BlazorDraggableListService.dotNetObjectReference, this.BrowserResizeService.dotNetObjectReference, this.BlazorFileUploadService.dotNetObjectReference);
+                this.VideoService.__jsRuntimeObjectRef = objref;
+                this.BlazorDraggableListService.__jsRuntimeObjectRef = objref;
+                this.BrowserResizeService.__jsRuntimeObjectRef = objref;
+                this.BlazorFileUploadService.__jsRuntimeObjectRef = objref;
+
+                await this.BrowserResizeService.RegisterWindowResizeCallback();
+                await BrowserHasResized();
+                */
+
+                this.BrowserResizeService.RegisterWindowResizeCallback();
+                await BrowserHasResized();
+
+                await this.JSRuntime.InvokeVoidAsync("showchathubscontainer");
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
         }
 
         private async void OnDraggableListDropEventExecute(object sender, BlazorDraggableListEvent e)
@@ -96,56 +155,6 @@ namespace Oqtane.ChatHubs
                 this.ChatHubService.HandleException(ex);
             }
         }
-
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-
-            if (firstRender)
-            {
-                string hostname = new Uri(NavigationManager.BaseUri).Host;
-                this.ChatHubService.IdentityCookie = new Cookie(".AspNetCore.Identity.Application", await this.CookieService.GetCookieAsync(".AspNetCore.Identity.Application"), "/", hostname);
-
-                JsRuntimeObjectRef objref = await this.JSRuntime.InvokeAsync<JsRuntimeObjectRef>("__init", this.VideoService.dotNetObjectReference, this.BlazorDraggableListService.dotNetObjectReference, this.BrowserResizeService.dotNetObjectReference, this.BlazorFileUploadService.dotNetObjectReference);
-                this.VideoService.__jsRuntimeObjectRef = objref;
-                this.BlazorDraggableListService.__jsRuntimeObjectRef = objref;
-                this.BrowserResizeService.__jsRuntimeObjectRef = objref;
-                this.BlazorFileUploadService.__jsRuntimeObjectRef = objref;
-
-                await this.BrowserResizeService.RegisterWindowResizeCallback();
-                await BrowserHasResized();
-                await this.JSRuntime.InvokeVoidAsync("showchathubscontainer");
-            }
-
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
-        protected override async Task OnParametersSetAsync()
-        {
-            try
-            {
-                this.ChatHubService.ModuleId = ModuleState.ModuleId;
-
-                this.settings = await this.SettingService.GetModuleSettingsAsync(ModuleState.ModuleId);
-                maxUserNameCharacters = int.Parse(this.SettingService.GetSetting(settings, "MaxUserNameCharacters", "500"));
-                
-                if (PageState.QueryString.ContainsKey("moduleid") && PageState.QueryString.ContainsKey("roomid") && int.Parse(PageState.QueryString["moduleid"]) == ModuleState.ModuleId)
-                {
-                    this.contextRoom = await this.ChatHubService.GetChatHubRoomAsync(int.Parse(PageState.QueryString["roomid"]), ModuleState.ModuleId);
-                }
-                else
-                {
-                    await this.ChatHubService.GetLobbyRooms(ModuleState.ModuleId);
-                }
-            }
-            catch (Exception ex)
-            {
-                await logger.LogError(ex, "Error Loading Rooms {Error}", ex.Message);
-                ModuleInstance.AddModuleMessage("Error Loading Rooms", MessageType.Error);
-            }
-
-            await base.OnParametersSetAsync();
-        }
-
         public async Task EnableArchiveRoom(ChatHubRoom room)
         {
             try
@@ -425,7 +434,7 @@ namespace Oqtane.ChatHubs
         public void Dispose()
         {
             this.BlazorDraggableListService.BlazorDraggableListServiceExtension.OnDropEvent -= OnDraggableListDropEventExecute;
-            this.BrowserResizeService.OnResize -= BrowserHasResized;
+            this.BrowserResizeService.BrowserResizeServiceExtension.OnResize -= BrowserHasResized;
             this.ChatHubService.OnUpdateUI -= (object sender, EventArgs e) => UpdateUIStateHasChanged();
 
             //this.ChatHubService.DisposeStreamTasks();

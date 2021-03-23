@@ -1,13 +1,16 @@
 ﻿using Microsoft.JSInterop;
 using Oqtane.Shared.Models;
 using System;
+using System.Threading.Tasks;
 
 namespace BlazorFileUpload
 {
     public class BlazorFileUploadService
     {
 
-        private readonly IJSRuntime JSRuntime;
+        public IJSRuntime JSRuntime;
+        public IJSObjectReference Module;
+        public IJSObjectReference FileUploadMap;
 
         public JsRuntimeObjectRef __jsRuntimeObjectRef { get; set; }
 
@@ -18,17 +21,14 @@ namespace BlazorFileUpload
         public BlazorFileUploadService(IJSRuntime jsRuntime)
         {
             this.JSRuntime = jsRuntime;
-
-            this.BlazorFileUploadServiceExtension = new BlazorFileUploadServiceExtension(this);
+            this.BlazorFileUploadServiceExtension = new BlazorFileUploadServiceExtension();
             this.dotNetObjectReference = DotNetObjectReference.Create(this.BlazorFileUploadServiceExtension);
         }
 
-        public void InitFileUploadDropzone(string inputFileId, string elementId)
+        public async Task InitFileUploadDropzone(string inputFileId, string elementId)
         {
-            if (this.__jsRuntimeObjectRef != null)
-            {
-                this.JSRuntime.InvokeVoidAsync("__obj.initfileuploaddropzone", inputFileId, elementId, __jsRuntimeObjectRef);
-            }
+            this.Module = await this.JSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorFileUpload/blazorfileuploadjsinterop.js");
+            this.FileUploadMap = await this.Module.InvokeAsync<IJSObjectReference>("initfileupload", this.dotNetObjectReference, inputFileId, elementId);
         }
 
     }
@@ -36,14 +36,7 @@ namespace BlazorFileUpload
     public class BlazorFileUploadServiceExtension
     {
 
-        private BlazorFileUploadService BlazorFileUploadService { get; set; }
-
         public event EventHandler<BlazorFileUploadEvent> OnDropEvent;
-
-        public BlazorFileUploadServiceExtension(BlazorFileUploadService blazorFileUploadService)
-        {
-            this.BlazorFileUploadService = blazorFileUploadService;
-        }
 
         [JSInvokable("OnDrop")]
         public void OnDrop(string elementId)

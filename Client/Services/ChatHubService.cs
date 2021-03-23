@@ -23,6 +23,7 @@ using BlazorDraggableList;
 using Oqtane.Shared.Enums;
 using Oqtane.Shared.Extensions;
 using BlazorVideo;
+using BlazorBrowserResize;
 
 namespace Oqtane.ChatHubs.Services
 {
@@ -38,7 +39,7 @@ namespace Oqtane.ChatHubs.Services
         public ScrollService ScrollService { get; set; }
         public BlazorAlertsService BlazorAlertsService { get; set; }
         public BlazorDraggableListService BlazorDraggableListService { get; set; }
-        public BrowserResizeService BrowserResizeService { get; set; }
+        public BlazorBrowserResizeService BrowserResizeService { get; set; }
         public BlazorVideoService BlazorVideoService { get; set; }
 
         public HubConnection Connection { get; set; }
@@ -84,7 +85,7 @@ namespace Oqtane.ChatHubs.Services
         public event EventHandler<ChatHubUser> OnDisconnectEvent;
         public event EventHandler<dynamic> OnExceptionEvent;
 
-        public ChatHubService(HttpClient httpClient, SiteState siteState, NavigationManager navigationManager, IJSRuntime JSRuntime, VideoService videoService, ScrollService scrollService, BlazorAlertsService blazorAlertsService, BlazorDraggableListService blazorDraggableListService, BrowserResizeService browserResizeService, BlazorVideoService blazorVideoService ) : base (httpClient)
+        public ChatHubService(HttpClient httpClient, SiteState siteState, NavigationManager navigationManager, IJSRuntime JSRuntime, VideoService videoService, ScrollService scrollService, BlazorAlertsService blazorAlertsService, BlazorDraggableListService blazorDraggableListService, BlazorBrowserResizeService browserResizeService, BlazorVideoService blazorVideoService ) : base (httpClient)
         {
             this.HttpClient = httpClient;
             this.SiteState = siteState;
@@ -233,7 +234,7 @@ namespace Oqtane.ChatHubs.Services
         {
             try
             {
-                //await this.BlazorVideoService.NewVideo(roomId.ToString());
+                await this.BlazorVideoService.NewVideo(roomId.ToString());
 
                 var room = this.Rooms.FirstOrDefault(item => item.Id == roomId);
                 await this.StopVideoChat(room.Id);
