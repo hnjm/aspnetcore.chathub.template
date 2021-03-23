@@ -23,6 +23,10 @@ The oqtane chathubs module allows developers to code and run realtime chat. Post
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 <script src="_content/BlazorStrap/blazorStrap.js"></script>
 <script src="_content/BlazorVideo/blazorvideojsinterop.js" type="module"></script>
+<script src="_content/BlazorBrowserResize/browserresizejsinterop.js" type="module"></script>
+<script src="_content/BlazorBrowserResize/browserresizemap.js" type="module"></script>
+<script src="_content/BlazorFileUpload/blazorfileuploadjsinterop.js" type="module"></script>
+<script src="_content/BlazorDraggableList/blazordraggablelistjsinterop.js" type="module"></script>
 <script src="modules/oqtane.chathubs/chat-hub-js-interop.js"></script>
 ```
 
