@@ -16,14 +16,12 @@ namespace BlazorBrowserResize
         public BlazorBrowserResizeService(IJSRuntime jsRuntime)
         {
             this.JsRuntime = jsRuntime;
+            this.BrowserResizeServiceExtension = new BlazorBrowserResizeServiceExtension();
+            this.DotNetObjRef = DotNetObjectReference.Create(this.BrowserResizeServiceExtension);
         }
         public async Task InitBrowserResizeService()
         {
             this.Module = await this.JsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorBrowserResize/browserresizejsinterop.js");
-
-            this.BrowserResizeServiceExtension = new BlazorBrowserResizeServiceExtension();
-            this.DotNetObjRef = DotNetObjectReference.Create(this.BrowserResizeServiceExtension);
-
             this.BrowserResizeMap = await this.Module.InvokeAsync<IJSObjectReference>("initbrowserresize", this.DotNetObjRef);
         }
 
