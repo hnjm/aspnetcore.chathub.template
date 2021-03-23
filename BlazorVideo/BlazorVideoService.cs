@@ -1,6 +1,8 @@
 ﻿using Microsoft.JSInterop;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace BlazorVideo
 {
@@ -8,28 +10,48 @@ namespace BlazorVideo
     public class BlazorVideoService : IAsyncDisposable
     {
 
-        public IJSRuntime _jSRuntime;
-        public IJSObjectReference _moduleTask;
-        public IJSObjectReference _blazorvideomap;
-        public DotNetObjectReference<BlazorVideoServiceExtension> _dotnetobjectref;
+        public IDictionary<string, IJSObjectReference> BlazorVideoMaps { get; set; } = new Dictionary<string, IJSObjectReference>();
+        public IJSObjectReference Module;
+        public IJSRuntime JsRuntime;
+        
+        public DotNetObjectReference<BlazorVideoServiceExtension> DotNetObjectRef;
         public BlazorVideoServiceExtension BlazorVideoServiceExtension;
 
         public BlazorVideoService(IJSRuntime jsRuntime)
         {
-            this._jSRuntime = jsRuntime;
+            this.JsRuntime = jsRuntime;
             this.BlazorVideoServiceExtension = new BlazorVideoServiceExtension();
-            this._dotnetobjectref = DotNetObjectReference.Create(this.BlazorVideoServiceExtension);
+            this.DotNetObjectRef = DotNetObjectReference.Create(this.BlazorVideoServiceExtension);
         }
 
-        public async Task InitBlazorVideo()
+        public async Task InitBlazorVideo(string id)
         {
-            this._moduleTask = await this._jSRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorVideo/blazorvideojsinterop.js");
-            this._blazorvideomap = await this._moduleTask.InvokeAsync<IJSObjectReference>("initblazorvideo", this._dotnetobjectref);
+            this.Module = await this.JsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorVideo/blazorvideojsinterop.js");
+            IJSObjectReference jsobjref = await this.Module.InvokeAsync<IJSObjectReference>("initblazorvideo", this.DotNetObjectRef, id);
+
+            this.AddDicItem(id, jsobjref);
         }
 
-        public async ValueTask NewVideo(string id)
+        public void AddDicItem(string id, IJSObjectReference jsobjref)
         {
-            await this._blazorvideomap.InvokeVoidAsync("newvideo", id);
+            if(!this.BlazorVideoMaps.Any(item => item.Key == id))
+            {
+                this.BlazorVideoMaps.Add(new KeyValuePair<string, IJSObjectReference>(id, jsobjref));
+            }
+        }
+
+        public void RemoveDicItem(string id)
+        {
+            if (this.BlazorVideoMaps.Any(item => item.Key == id))
+            {
+                this.BlazorVideoMaps.Remove(id);
+            }
+        }
+
+        public void NewVideo(string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Key == id);
+            keyvaluepair.Value.InvokeVoidAsync("newvideo");
         }
 
         public async ValueTask DisposeAsync()
@@ -37,10 +59,12 @@ namespace BlazorVideo
             //await this._blazorvideomap.DisposeAsync();
             //await this._moduleTask.DisposeAsync();
         }
+
     }
 
     public class BlazorVideoServiceExtension
     {
+
         public event EventHandler<dynamic> OnDataAvailableEventHandler;
 
         [JSInvokable("OnDataAvailable")]
@@ -48,6 +72,7 @@ namespace BlazorVideo
         {
             this.OnDataAvailableEventHandler?.Invoke(typeof(BlazorVideoServiceExtension), new { dataURI = dataURI, id = id });
         }
+
     }
 
 }

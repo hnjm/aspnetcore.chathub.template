@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 using System.Threading.Tasks;
 
 namespace BlazorVideo
@@ -10,6 +9,12 @@ namespace BlazorVideo
         [Inject] public BlazorVideoService BlazorVideoService { get; set; }
 
         [Parameter] public string Id { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            await this.BlazorVideoService.InitBlazorVideo(this.Id);
+            await base.OnInitializedAsync();
+        }
 
     }
 }

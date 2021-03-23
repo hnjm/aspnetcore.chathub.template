@@ -41,6 +41,7 @@
     <ProjectReference Include="..\BlazorModal\BlazorModal.csproj" />
     <ProjectReference Include="..\BlazorPager\BlazorPager.csproj" />
     <ProjectReference Include="..\BlazorTabs\BlazorTabs.csproj" />
+    <ProjectReference Include="..\BlazorVideo\BlazorVideo.csproj" />
     <ProjectReference Include="..\BlazorWindows\BlazorWindows.csproj" />
     <ProjectReference Include="..\Shared\Oqtane.ChatHubs.Shared.csproj" />
   </ItemGroup>

@@ -232,10 +232,13 @@ namespace Oqtane.ChatHubs.Services
 
         public async Task StartVideoChat(int roomId)
         {
+
+            this.BlazorVideoService.NewVideo(roomId.ToString());
+
             try
             {
-                await this.BlazorVideoService.NewVideo(roomId.ToString());
 
+                /*
                 var room = this.Rooms.FirstOrDefault(item => item.Id == roomId);
                 await this.StopVideoChat(room.Id);
 
@@ -254,6 +257,7 @@ namespace Oqtane.ChatHubs.Services
                     this.AddRemoteStreamTask(roomId);
                     await this.VideoService.StartStreaming(room.Id);
                 }
+                */
             }
             catch (Exception ex)
             {

@@ -79,7 +79,7 @@
             transition: all 0.2s linear;
         }
 
-        /*
+            /*
         .blazor-tabs > ul.nav-tabs li:nth-of-type(4n+1) a:before,
         .blazor-tabs > ul.nav-tabs li:nth-of-type(4n+1) a:after {
             background-color: slateblue;
@@ -105,35 +105,35 @@
         }
         */
 
-        .blazor-tabs > ul.nav-tabs li a:hover,
-        .blazor-tabs > ul.nav-tabs li.active a {
-            border: none;
-        }
+            .blazor-tabs > ul.nav-tabs li a:hover,
+            .blazor-tabs > ul.nav-tabs li.active a {
+                border: none;
+            }
 
-        .blazor-tabs > ul.nav-tabs li a:before {
-            position: absolute;
-            content: "";
-            width: 100%;
-            height: 2px;
-            bottom: 0;
-            left: 0;
-            background-color: black;
-            border-color: black;
-        }
+            .blazor-tabs > ul.nav-tabs li a:before {
+                position: absolute;
+                content: "";
+                width: 100%;
+                height: 2px;
+                bottom: 0;
+                left: 0;
+                background-color: black;
+                border-color: black;
+            }
 
-        .blazor-tabs > ul.nav-tabs li a:after {
-            position: absolute;
-            content: "";
-            width: 100%;
-            height: 4px;
-            bottom: 0;
-            left: 0;
-            opacity: 0;
-            z-index: 1;
-            transition: all 0.2s linear;
-            background-color: black;
-            border-color: black;
-        }
+            .blazor-tabs > ul.nav-tabs li a:after {
+                position: absolute;
+                content: "";
+                width: 100%;
+                height: 4px;
+                bottom: 0;
+                left: 0;
+                opacity: 0;
+                z-index: 1;
+                transition: all 0.2s linear;
+                background-color: black;
+                border-color: black;
+            }
 
         .blazor-tabs > ul.nav-tabs li:hover a:after,
         .blazor-tabs > ul.nav-tabs li.active a:after {
@@ -324,10 +324,9 @@
 
                                     </WindowTitle>
                                     <WindowLivestream>
-                                        
-                                        <BlazorVideoComponent Id="@room.Id.ToString()"></BlazorVideoComponent>
 
-                                        <VideoComponent ChatHubRoom="@room" ItemIndex="@room_index"></VideoComponent>
+                                        <BlazorVideoComponent Id="@room.Id.ToString()"></BlazorVideoComponent>
+                                        <!--<VideoComponent ChatHubRoom="@room" ItemIndex="@room_index"></VideoComponent>-->
 
                                     </WindowLivestream>
                                     <WindowContent>
@@ -450,25 +449,25 @@
                                                                 @if (item.Photos != null)
                                                                 {
 
-                                                                <div>
-                                                                    <button type="button" class="btn btn-link" @onclick="() => ImageModalRef.OpenDialog(item)">
+                                                                    <div>
+                                                                        <button type="button" class="btn btn-link" @onclick="() => ImageModalRef.OpenDialog(item)">
 
-                                                                        Open Image(s)
+                                                                            Open Image(s)
 
-                                                                        @if (item.Photos != null)
+                                                                            @if (item.Photos != null)
                                                                             {
-                                                                        @foreach (var photo in item.Photos)
+                                                                                @foreach (var photo in item.Photos)
                                                                                 {
-                                                                        <span>@photo.Caption</span>
+                                                                                    <span>@photo.Caption</span>
 
-                                                                        @if (!photo.Equals(item.Photos.Last()))
+                                                                                    @if (!photo.Equals(item.Photos.Last()))
                                                                                     {
-                                                                        <strong> | </strong>
+                                                                                        <strong> | </strong>
                                                                                     }
                                                                                 }
                                                                             }
-                                                                    </button>
-                                                                </div>
+                                                                        </button>
+                                                                    </div>
 
                                                                 }
                                                             </ImageTemplate>
@@ -477,29 +476,29 @@
                                                                 <div>
                                                                     @if (item.CommandMetaDatas != null && item.CommandMetaDatas.Any())
                                                                     {
-                                                                    <div class="table-responsive-sm">
-                                                                        <table class="table table-sm chathub-font-size-075rem">
-                                                                            <thead>
-                                                                                <tr>
-                                                                                    <th scope="col">Name</th>
-                                                                                    <th scope="col">Roles</th>
-                                                                                    <th scope="col">Usage</th>
-                                                                                    <th scope="col">Arguments</th>
-                                                                                </tr>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                                @foreach (var command in item.CommandMetaDatas)
+                                                                        <div class="table-responsive-sm">
+                                                                            <table class="table table-sm chathub-font-size-075rem">
+                                                                                <thead>
+                                                                                    <tr>
+                                                                                        <th scope="col">Name</th>
+                                                                                        <th scope="col">Roles</th>
+                                                                                        <th scope="col">Usage</th>
+                                                                                        <th scope="col">Arguments</th>
+                                                                                    </tr>
+                                                                                </thead>
+                                                                                <tbody>
+                                                                                    @foreach (var command in item.CommandMetaDatas)
                                                                                     {
-                                                                                <tr>
-                                                                                    <td>/@command.ResourceName</td>
-                                                                                    <td>@string.Join(" | ", command.Roles)</td>
-                                                                                    <td>@command.Usage</td>
-                                                                                    <td>@command.Arguments</td>
-                                                                                </tr>
+                                                                                        <tr>
+                                                                                            <td>/@command.ResourceName</td>
+                                                                                            <td>@string.Join(" | ", command.Roles)</td>
+                                                                                            <td>@command.Usage</td>
+                                                                                            <td>@command.Arguments</td>
+                                                                                        </tr>
                                                                                     }
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
+                                                                                </tbody>
+                                                                            </table>
+                                                                        </div>
                                                                     }
                                                                 </div>
 
@@ -543,85 +542,85 @@
                                                                     <div>
                                                                         @foreach (ChatHubUser user in room.Users)
                                                                         {
-                                                                        @if (user.UserId == ChatHubService.ConnectedUser.UserId)
+                                                                            @if (user.UserId == ChatHubService.ConnectedUser.UserId)
                                                                             {
-                                                                        <BSCard CardType="CardType.Card" @key="user">
-                                                                            <BSCard CardType="CardType.Header">
-                                                                                <BSButton ButtonType="ButtonType.Button" OnClick="(e) => UserlistItem_Clicked(e, room, user)" Color="Color.None" Class="btn-link">
-                                                                                    <strong class="align-middle" style="height: 16px;">@user.DisplayName</strong>
-                                                                                </BSButton>
-                                                                            </BSCard>
-                                                                            @if (user.UserlistItemCollapsed)
+                                                                                <BSCard CardType="CardType.Card" @key="user">
+                                                                                    <BSCard CardType="CardType.Header">
+                                                                                        <BSButton ButtonType="ButtonType.Button" OnClick="(e) => UserlistItem_Clicked(e, room, user)" Color="Color.None" Class="btn-link">
+                                                                                            <strong class="align-middle" style="height: 16px;">@user.DisplayName</strong>
+                                                                                        </BSButton>
+                                                                                    </BSCard>
+                                                                                    @if (user.UserlistItemCollapsed)
                                                                                     {
-                                                                            <BSCard CardType="CardType.Body">
-                                                                                <BSCard CardType="CardType.Text">
-                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => OpenProfile_Clicked(user.UserId, room.Id)">Profile/Settings</button>
-                                                                                </BSCard>
-                                                                            </BSCard>
+                                                                                        <BSCard CardType="CardType.Body">
+                                                                                            <BSCard CardType="CardType.Text">
+                                                                                                <button type="button" class="btn btn-sm btn-link" @onclick="() => OpenProfile_Clicked(user.UserId, room.Id)">Profile/Settings</button>
+                                                                                            </BSCard>
+                                                                                        </BSCard>
                                                                                     }
-                                                                        </BSCard>
+                                                                                </BSCard>
                                                                             }
                                                                             else
                                                                             {
-                                                                        <BSCard CardType="CardType.Card" @key="user">
-                                                                            <BSCard CardType="CardType.Header">
-                                                                                <BSButton ButtonType="ButtonType.Button" OnClick="(e) => UserlistItem_Clicked(e, room, user)" Color="Color.None" Class="btn-link">
-                                                                                    <span class="align-middle" style="height: 16px;">@user.DisplayName</span>
-                                                                                </BSButton>
-                                                                            </BSCard>
-                                                                            @if (user.UserlistItemCollapsed)
+                                                                                <BSCard CardType="CardType.Card" @key="user">
+                                                                                    <BSCard CardType="CardType.Header">
+                                                                                        <BSButton ButtonType="ButtonType.Button" OnClick="(e) => UserlistItem_Clicked(e, room, user)" Color="Color.None" Class="btn-link">
+                                                                                            <span class="align-middle" style="height: 16px;">@user.DisplayName</span>
+                                                                                        </BSButton>
+                                                                                    </BSCard>
+                                                                                    @if (user.UserlistItemCollapsed)
                                                                                     {
-                                                                            <BSCard CardType="CardType.Body">
+                                                                                        <BSCard CardType="CardType.Body">
 
-                                                                                @if (!ChatHubService.IgnoredUsers.Any(item => item.UserId == user.UserId))
+                                                                                            @if (!ChatHubService.IgnoredUsers.Any(item => item.UserId == user.UserId))
                                                                                             {
-                                                                                <BSCard CardType="CardType.Text">
-                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.IgnoreUser_Clicked(user.UserId, room.Id, user.Username)">Ignore User</button>
-                                                                                </BSCard>
+                                                                                                <BSCard CardType="CardType.Text">
+                                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.IgnoreUser_Clicked(user.UserId, room.Id, user.Username)">Ignore User</button>
+                                                                                                </BSCard>
                                                                                             }
 
-                                                                                @if (!room.Moderators.Any(item => item.ChatHubUserId == user.UserId))
+                                                                                            @if (!room.Moderators.Any(item => item.ChatHubUserId == user.UserId))
                                                                                             {
-                                                                                <BSCard CardType="CardType.Text">
-                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.AddModerator_Clicked(user.UserId, room.Id)">Add Modi</button>
-                                                                                </BSCard>
+                                                                                                <BSCard CardType="CardType.Text">
+                                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.AddModerator_Clicked(user.UserId, room.Id)">Add Modi</button>
+                                                                                                </BSCard>
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                <BSCard CardType="CardType.Text">
-                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveModerator_Clicked(user.UserId, room.Id)">Delete Modi</button>
-                                                                                </BSCard>
+                                                                                                <BSCard CardType="CardType.Text">
+                                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveModerator_Clicked(user.UserId, room.Id)">Delete Modi</button>
+                                                                                                </BSCard>
                                                                                             }
 
-                                                                                @if (!room.WhitelistUsers.Any(item => item.ChatHubUserId == user.UserId))
+                                                                                            @if (!room.WhitelistUsers.Any(item => item.ChatHubUserId == user.UserId))
                                                                                             {
-                                                                                <BSCard CardType="CardType.Text">
-                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.AddWhitelistUser_Clicked(user.UserId, room.Id)">Add Whitelist User</button>
-                                                                                </BSCard>
+                                                                                                <BSCard CardType="CardType.Text">
+                                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.AddWhitelistUser_Clicked(user.UserId, room.Id)">Add Whitelist User</button>
+                                                                                                </BSCard>
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                <BSCard CardType="CardType.Text">
-                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveWhitelistUser_Clicked(user.UserId, room.Id)">Delete Whitelist User</button>
-                                                                                </BSCard>
+                                                                                                <BSCard CardType="CardType.Text">
+                                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveWhitelistUser_Clicked(user.UserId, room.Id)">Delete Whitelist User</button>
+                                                                                                </BSCard>
                                                                                             }
 
-                                                                                @if (!room.BlacklistUsers.Any(item => item.ChatHubUserId == user.UserId))
+                                                                                            @if (!room.BlacklistUsers.Any(item => item.ChatHubUserId == user.UserId))
                                                                                             {
-                                                                                <BSCard CardType="CardType.Text">
-                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.AddBlacklistUser_Clicked(user.UserId, room.Id)">Add Blacklist User</button>
-                                                                                </BSCard>
+                                                                                                <BSCard CardType="CardType.Text">
+                                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.AddBlacklistUser_Clicked(user.UserId, room.Id)">Add Blacklist User</button>
+                                                                                                </BSCard>
                                                                                             }
                                                                                             else
                                                                                             {
-                                                                                <BSCard CardType="CardType.Text">
-                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveBlacklistUser_Clicked(user.UserId, room.Id)">Delete Blacklist User</button>
-                                                                                </BSCard>
+                                                                                                <BSCard CardType="CardType.Text">
+                                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveBlacklistUser_Clicked(user.UserId, room.Id)">Delete Blacklist User</button>
+                                                                                                </BSCard>
                                                                                             }
 
-                                                                            </BSCard>
+                                                                                        </BSCard>
                                                                                     }
-                                                                        </BSCard>
+                                                                                </BSCard>
                                                                             }
                                                                         }
                                                                     </div>
@@ -681,23 +680,23 @@
                                                                         <tbody>
                                                                             @foreach (var modi in room.Moderators)
                                                                             {
-                                                                            <tr>
-                                                                                <td>@modi.ModeratorDisplayName</td>
-                                                                                <td>
-                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveModerator_Clicked(modi.ChatHubUserId, room.Id)">
-                                                                                        <span class="oi oi-x"></span>
-                                                                                    </button>
-                                                                                </td>
-                                                                            </tr>
+                                                                                <tr>
+                                                                                    <td>@modi.ModeratorDisplayName</td>
+                                                                                    <td>
+                                                                                        <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveModerator_Clicked(modi.ChatHubUserId, room.Id)">
+                                                                                            <span class="oi oi-x"></span>
+                                                                                        </button>
+                                                                                    </td>
+                                                                                </tr>
                                                                             }
                                                                         </tbody>
                                                                     </table>
 
                                                                     @if (!room.Moderators.Any())
                                                                     {
-                                                                    <div class="alert alert-warning" role="alert">
-                                                                        No moderators found yet.
-                                                                    </div>
+                                                                        <div class="alert alert-warning" role="alert">
+                                                                            No moderators found yet.
+                                                                        </div>
                                                                     }
 
                                                                 </div>
@@ -716,23 +715,23 @@
                                                                         <tbody>
                                                                             @foreach (var whitelistUser in room.WhitelistUsers)
                                                                             {
-                                                                            <tr>
-                                                                                <td>@whitelistUser.WhitelistUserDisplayName</td>
-                                                                                <td>
-                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveWhitelistUser_Clicked(whitelistUser.ChatHubUserId, room.Id)">
-                                                                                        <span class="oi oi-x"></span>
-                                                                                    </button>
-                                                                                </td>
-                                                                            </tr>
+                                                                                <tr>
+                                                                                    <td>@whitelistUser.WhitelistUserDisplayName</td>
+                                                                                    <td>
+                                                                                        <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveWhitelistUser_Clicked(whitelistUser.ChatHubUserId, room.Id)">
+                                                                                            <span class="oi oi-x"></span>
+                                                                                        </button>
+                                                                                    </td>
+                                                                                </tr>
                                                                             }
                                                                         </tbody>
                                                                     </table>
 
                                                                     @if (!room.WhitelistUsers.Any())
                                                                     {
-                                                                    <div class="alert alert-warning" role="alert">
-                                                                        No whitelist users found yet.
-                                                                    </div>
+                                                                        <div class="alert alert-warning" role="alert">
+                                                                            No whitelist users found yet.
+                                                                        </div>
                                                                     }
 
                                                                 </div>
@@ -751,23 +750,23 @@
                                                                         <tbody>
                                                                             @foreach (var blacklistUser in room.BlacklistUsers)
                                                                             {
-                                                                            <tr>
-                                                                                <td>@blacklistUser.BlacklistUserDisplayName</td>
-                                                                                <td>
-                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveBlacklistUser_Clicked(blacklistUser.ChatHubUserId, room.Id)">
-                                                                                        <span class="oi oi-x"></span>
-                                                                                    </button>
-                                                                                </td>
-                                                                            </tr>
+                                                                                <tr>
+                                                                                    <td>@blacklistUser.BlacklistUserDisplayName</td>
+                                                                                    <td>
+                                                                                        <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveBlacklistUser_Clicked(blacklistUser.ChatHubUserId, room.Id)">
+                                                                                            <span class="oi oi-x"></span>
+                                                                                        </button>
+                                                                                    </td>
+                                                                                </tr>
                                                                             }
                                                                         </tbody>
                                                                     </table>
 
                                                                     @if (!room.BlacklistUsers.Any())
                                                                     {
-                                                                    <div class="alert alert-warning" role="alert">
-                                                                        No blacklist users found yet.
-                                                                    </div>
+                                                                        <div class="alert alert-warning" role="alert">
+                                                                            No blacklist users found yet.
+                                                                        </div>
                                                                     }
 
                                                                 </div>
@@ -786,23 +785,23 @@
                                                                         <tbody>
                                                                             @foreach (var waitingRoomItem in room.WaitingRoomItems)
                                                                             {
-                                                                            <tr>
-                                                                                <td>@waitingRoomItem.DisplayName</td>
-                                                                                <td>
-                                                                                    <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveWaitingRoomItem_Clicked(waitingRoomItem)">
-                                                                                        <span class="oi oi-check"></span>
-                                                                                    </button>
-                                                                                </td>
-                                                                            </tr>
+                                                                                <tr>
+                                                                                    <td>@waitingRoomItem.DisplayName</td>
+                                                                                    <td>
+                                                                                        <button type="button" class="btn btn-sm btn-link" @onclick="() => ChatHubService.RemoveWaitingRoomItem_Clicked(waitingRoomItem)">
+                                                                                            <span class="oi oi-check"></span>
+                                                                                        </button>
+                                                                                    </td>
+                                                                                </tr>
                                                                             }
                                                                         </tbody>
                                                                     </table>
 
                                                                     @if (!room.WaitingRoomItems.Any())
                                                                     {
-                                                                    <div class="alert alert-warning" role="alert">
-                                                                        No waiting room users found yet.
-                                                                    </div>
+                                                                        <div class="alert alert-warning" role="alert">
+                                                                            No waiting room users found yet.
+                                                                        </div>
                                                                     }
 
                                                                 </div>

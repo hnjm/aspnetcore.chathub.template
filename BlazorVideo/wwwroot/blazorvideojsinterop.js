@@ -1,13 +1,13 @@
-export function initblazorvideo(dotnetobjref) {
+export function initblazorvideo(dotnetobjref, id) {
 
-    __obj = {
+    var __obj = {
 
-        blazorvideomap: function () {
+        blazorvideomap: function (dotnetobjref, id) {
             
             var __selfblazorvideomap = this;
             this.videoelementidprefix = '#video-element-id-';
             this.contextvideo = null;
-            this.video = function (id) {
+            this.video = function () {
 
                 var __selfvideo = this;
 
@@ -20,7 +20,7 @@ export function initblazorvideo(dotnetobjref) {
                         height: { min: 240, ideal: 240, max: 240 },
                         frameRate: { ideal: 24 },
                         facingMode: { ideal: "user" },
-                    }
+                    },
                 };
 
                 this.videoelementid = __selfblazorvideomap.videoelementidprefix + id;
@@ -53,11 +53,11 @@ export function initblazorvideo(dotnetobjref) {
                         });
                 };
             };
-            this.newvideo = function (id) {
+            this.newvideo = function () {
 
                 try {
 
-                    __selfblazorvideomap.contextvideo = new __selfblazorvideomap.video(id);
+                    __selfblazorvideomap.contextvideo = new __selfblazorvideomap.video();
                     __selfblazorvideomap.contextvideo.initusermedia();
                 }
                 catch (ex) {
@@ -68,5 +68,5 @@ export function initblazorvideo(dotnetobjref) {
         }
     }
 
-    return new self.__obj.blazorvideomap();
+    return new __obj.blazorvideomap(dotnetobjref, id);
 };
