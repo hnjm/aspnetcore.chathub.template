@@ -56,8 +56,12 @@ namespace BlazorVideo
 
         public async ValueTask DisposeAsync()
         {
-            //await this._blazorvideomap.DisposeAsync();
-            //await this._moduleTask.DisposeAsync();
+            foreach(var keyvaluepair in this.BlazorVideoMaps)
+            {
+                await keyvaluepair.Value.DisposeAsync();
+            }
+
+            await this.Module.DisposeAsync();
         }
 
     }
