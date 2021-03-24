@@ -30,6 +30,7 @@ namespace BlazorVideo
             IJSObjectReference jsobjref = await this.Module.InvokeAsync<IJSObjectReference>("initblazorvideo", this.DotNetObjectRef, id, type.ToString().ToLower());
 
             this.AddDicItem(id, type, jsobjref);
+            this.InitJsMapLocalLivestream(id);
         }
 
         public void AddDicItem(string id, BlazorVideoType type, IJSObjectReference jsobjref)
@@ -48,10 +49,17 @@ namespace BlazorVideo
             }
         }
 
-        public void NewLocalLivestream(string id)
+        public void InitJsMapLocalLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("newlocallivestream");
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("initlocallivestream");
+        }
+
+        public void StartBroadcasting(string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+            this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, Livestreaming = true };
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startbroadcasting");
         }
 
         public async ValueTask DisposeAsync()

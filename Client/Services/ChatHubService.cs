@@ -233,7 +233,7 @@ namespace Oqtane.ChatHubs.Services
         public async Task StartVideoChat(int roomId)
         {
 
-            this.BlazorVideoService.NewLocalLivestream(roomId.ToString());
+            this.BlazorVideoService.StartBroadcasting(roomId.ToString());
 
             try
             {

@@ -54,8 +54,8 @@
         <div>
             <div class="video-item-resize-container-@Id position-relative">
 
-                <div class="align-items-center justify-content-center px-3 h-100 @(!BlazorVideoService.BlazorVideoMaps.Any(item => item.Value.Id == Id) ? "d-flex" : "d-none")">
-                    <button class="btn btn-lg btn-link text-white bg-dark p-sm-2" type="button" @onclick="async () => BlazorVideoService.NewLocalLivestream(Id)">
+                <div class="align-items-center justify-content-center px-3 h-100 @(!BlazorVideoService.BlazorVideoMaps.Any(item => item.Value.Id == Id && item.Value.Livestreaming == true) ? "d-flex" : "d-none")">
+                    <button class="btn btn-lg btn-link text-white bg-dark p-sm-2" type="button" @onclick="async () => BlazorVideoService.StartBroadcasting(Id)">
                         ▷ @Name
                     </button>
                 </div>
@@ -68,10 +68,10 @@
 
                     <div class="position-absolute video-item-devices" style="right: 0px; top: 0px;">
                         <div class="input-group" style="padding: 0.25rem 0.25rem 0.125rem 0.25rem">
-                            <select id="chathubs-audio-source-local-@Id" class="custom-select custom-select-sm" style="width: 120px !important;"></select>
+                            <select id="local-livestream-audio-source-@Id" class="custom-select custom-select-sm" style="width: 120px !important;"></select>
                         </div>
                         <div class="input-group" style="padding: 0.125rem 0.25rem 0.25rem 0.25rem">
-                            <select id="chathubs-video-source-local-@Id" class="custom-select custom-select-sm" style="width: 120px !important;"></select>
+                            <select id="local-livestream-video-source-@Id" class="custom-select custom-select-sm" style="width: 120px !important;"></select>
                         </div>
                     </div>
                 </div>
@@ -84,8 +84,8 @@
         <div>
             <div class="video-item-resize-container-@Id position-relative">
 
-                <div class="align-items-center justify-content-center px-3 h-100 @(!BlazorVideoService.BlazorVideoMaps.Any(item => item.Value.Id == Id) ? "d-flex" : "d-none")">
-                    <button class="btn btn-lg btn-link text-white bg-dark p-sm-2" type="button" @onclick="async () => BlazorVideoService.NewLocalLivestream(Id)">
+                <div class="align-items-center justify-content-center px-3 h-100 @(!BlazorVideoService.BlazorVideoMaps.Any(item => item.Value.Id == Id && item.Value.Livestreaming) ? "d-flex" : "d-none")">
+                    <button class="btn btn-lg btn-link text-white bg-dark p-sm-2" type="button" @onclick="async () => BlazorVideoService.StartBroadcasting(Id)">
                         ▷ @Name
                     </button>
                 </div>

@@ -11,5 +11,7 @@ namespace BlazorVideo
 
         public IJSObjectReference JsObjRef { get; set; }
 
+        public bool Livestreaming { get; set; }
+
     }
 }

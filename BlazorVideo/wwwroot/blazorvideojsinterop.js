@@ -5,7 +5,11 @@ export function initblazorvideo(dotnetobjref, id, type) {
         blazorvideomap: function (dotnetobjref, id, type) {
             
             var __selfblazorvideomap = this;
+
             this.locallivestreamelementidprefix = '#local-livestream-element-id-';
+            this.audiosourcelocalid = '#local-livestream-audio-source-';
+            this.videosourcelocalid = '#local-livestream-video-source-';
+
             this.videomimetypeobject = {
 
                 get mimetype() {
@@ -30,56 +34,168 @@ export function initblazorvideo(dotnetobjref, id, type) {
             this.contextlocallivestream = null;
             this.locallivestream = function () {
 
-                var __selfvideo = this;
-
-                this.constrains = {
-                    audio: {
-                        volume: { ideal: 0.5 },
-                    },
-                    video: {
-                        width: { min: 320, ideal: 320, max: 320 },
-                        height: { min: 240, ideal: 240, max: 240 },
-                        frameRate: { ideal: 24 },
-                        facingMode: { ideal: "user" },
-                    },
-                };
+                var __selflocallivestream = this;
 
                 this.videoelementid = __selfblazorvideomap.locallivestreamelementidprefix + id;
                 this.getvideoelement = function () {
-                    return document.querySelector(__selfvideo.videoelementid);
+                    return document.querySelector(__selflocallivestream.videoelementid);
                 };
+
+                this.audiosourcelocalid = __selfblazorvideomap.audiosourcelocalid + id;
+                this.getaudiosourcelocaldomelement = function () {
+                    return document.querySelector(__selflocallivestream.audiosourcelocalid);
+                };
+                this.videosourcelocalid = __selfblazorvideomap.videosourcelocalid + id;
+                this.getvideosourcelocaldomelement = function () {
+                    return document.querySelector(__selflocallivestream.videosourcelocalid);
+                };
+
+                this.audioselect = this.getaudiosourcelocaldomelement();
+                this.videoselect = this.getvideosourcelocaldomelement();
 
                 this.vElement = this.getvideoelement();
                 this.vElement.onloadedmetadata = function (e) {
 
-                    __selfvideo.vElement.play();
+                    __selflocallivestream.vElement.play();
                 };
                 this.vElement.autoplay = true;
                 this.vElement.controls = true;
                 this.vElement.muted = true;
 
-                this.initusermedia = async function () {
+                this.currentgotdevices = null;
+                this.gotDevices = function (mediadeviceinfos) {
 
-                    window.navigator.mediaDevices.getUserMedia(__selfvideo.constrains)
-                        .then(function (stream) {
+                    var audioselectchild = __selflocallivestream.audioselect.firstElementChild;
+                    while (audioselectchild) {
+                        __selflocallivestream.audioselect.removeChild(audioselectchild);
+                        audioselectchild = __selflocallivestream.audioselect.firstElementChild;
+                    }
 
-                            __selfvideo.vElement.srcObject = stream;
-                            __selfvideo.vElement.onloadedmetadata = function (e) {
-                                __selfvideo.vElement.play();
+                    var videoselectchild = __selflocallivestream.videoselect.firstElementChild;
+                    while (videoselectchild) {
+                        __selflocallivestream.videoselect.removeChild(videoselectchild);
+                        videoselectchild = __selflocallivestream.videoselect.firstElementChild;
+                    }
+
+                    for (var i = 0; i < mediadeviceinfos.length; i++) {
+
+                        var temp = i;
+                        const deviceInfo = mediadeviceinfos[temp];
+                        const option = document.createElement("option");
+                        option.value = deviceInfo.deviceId;
+                        if (deviceInfo.kind === "audioinput") {
+                            option.text = deviceInfo.label || "microphone " + (__selflocallivestream.audioselect.length + 1);
+                            __selflocallivestream.audioselect.appendChild(option);
+                        } else if (deviceInfo.kind === "videoinput") {
+                            option.text = deviceInfo.label || "camera " + (__selflocallivestream.videoselect.length + 1);
+                            __selflocallivestream.videoselect.appendChild(option);
+                        } else {
+                            console.log("Found another kind of device: ", deviceInfo);
+                        }
+                    }
+                };
+
+                this.currentgetstream = null;
+                this.getStream = function () {
+
+                    var __selfgetstream = this;
+
+                    this.constrains = {
+                        audio: {
+                            volume: { ideal: 0.5 },
+                        },
+                        video: {
+                            width: { min: 320, ideal: 320, max: 320 },
+                            height: { min: 240, ideal: 240, max: 240 },
+                            frameRate: { ideal: 24 },
+                            facingMode: { ideal: "user" },
+                        }
+                    };
+
+                    this.constrains.audio['deviceId'] = { ideal: __selflocallivestream.audioselect.value };
+                    this.constrains.video['deviceId'] = { ideal: __selflocallivestream.videoselect.value };
+
+                    window.navigator.mediaDevices
+                        .getUserMedia(this.constrains)
+                        .then(function (mediastream) {
+
+                            __selflocallivestream.vElement.srcObject = mediastream;
+
+                            __selfgetstream.options = { mimeType: __selfblazorvideomap.videomimetypeobject.mimetype, audioBitsPerSecond: 420000, videoBitsPerSecond: 800000, ignoreMutedMedia: true };
+                            __selfgetstream.recorder = new MediaRecorder(mediastream, __selfgetstream.options);
+
+                            __selfgetstream.recorder.start();
+                            __selfgetstream.recorder.ondataavailable = (event) => {
+
+                                if (event.data.size > 0) {
+
+                                    console.log(event.data);
+                                    __selflocallivestream.broadcastvideodata(event.data);
+                                }
                             };
-                        })
-                        .catch(function (err) {
 
-                            console.error(err);
+                        })
+                        .catch(function (ex) {
+                            console.warn(ex);
                         });
                 };
+
+                this.initdevices = function () {
+
+                    var promise = new Promise(function (resolve) {
+
+                        window.navigator.mediaDevices.enumerateDevices()
+                            .then(function (mediadeviceinfos) {
+
+                                __selflocallivestream.currentgotdevices = new __selflocallivestream.gotDevices(mediadeviceinfos);
+                            })
+                            .catch(function (ex) {
+
+                                console.warn(ex.message);
+                            })
+                            .finally(function () {
+
+                                resolve();
+                            });
+                    });
+                };
+                this.initstream = function () {
+
+                    __selflocallivestream.currentgetstream = new __selflocallivestream.getStream();
+                };
+
+                this.handleonchangeevent = async function () {
+
+                    await __selflocallivestream.cancel();
+                    __selflocallivestream.currentgetstream = new __selflocallivestream.getStream();
+                };
+
+                this.audioselect.removeEventListener("change", __selflocallivestream.handleonchangeevent);
+                this.audioselect.addEventListener("change", __selflocallivestream.handleonchangeevent);
+
+                this.videoselect.removeEventListener("change", __selflocallivestream.handleonchangeevent);
+                this.videoselect.addEventListener("change", __selflocallivestream.handleonchangeevent);
+
             };
-            this.newlocallivestream = function () {
+            this.initlocallivestream = async function () {
+
+                try {
+                    __selfblazorvideomap.contextlocallivestream = new __selfblazorvideomap.locallivestream();
+                    await __selfblazorvideomap.contextlocallivestream.initdevices();
+                }
+                catch (ex) {
+
+                    console.warn(ex);
+                }
+            };
+            this.startbroadcasting = function () {
 
                 try {
 
-                    __selfblazorvideomap.contextlocallivestream = new __selfblazorvideomap.locallivestream();
-                    __selfblazorvideomap.contextlocallivestream.initusermedia();
+                    if (__selfblazorvideomap.contextlocallivestream != null) {
+
+                        __selfblazorvideomap.contextlocallivestream.initstream();
+                    }
                 }
                 catch (ex) {
 
