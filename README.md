@@ -39,6 +39,9 @@ services.AddScoped<VideoService, VideoService>();
 services.AddScoped<BlazorAlertsService, BlazorAlertsService>();
 services.AddScoped<BlazorDraggableListService, BlazorDraggableListService>();
 services.AddScoped<BlazorFileUploadService, BlazorFileUploadService>();
+services.AddScoped<BlazorColorPickerService, BlazorColorPickerService>();
+services.AddScoped<BlazorVideoService, BlazorVideoService>();
+services.AddScoped<BlazorBrowserResizeService, BlazorBrowserResizeService>();
 
 services.AddServerSideBlazor()
     .AddHubOptions(options => options.MaximumReceiveMessageSize = 512 * 1024);
