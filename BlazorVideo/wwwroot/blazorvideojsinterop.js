@@ -1,13 +1,34 @@
-export function initblazorvideo(dotnetobjref, id) {
+export function initblazorvideo(dotnetobjref, id, type) {
 
     var __obj = {
 
-        blazorvideomap: function (dotnetobjref, id) {
+        blazorvideomap: function (dotnetobjref, id, type) {
             
             var __selfblazorvideomap = this;
             this.videoelementidprefix = '#video-element-id-';
-            this.contextvideo = null;
-            this.video = function () {
+            this.videomimetypeobject = {
+
+                get mimetype() {
+
+                    var userAgent = navigator.userAgent.toLowerCase();
+
+                    if (userAgent.indexOf('chrome') > -1 ||
+                        userAgent.indexOf('firefox') > -1 ||
+                        userAgent.indexOf('opera') > -1 ||
+                        userAgent.indexOf('safari') > -1 ||
+                        userAgent.indexOf('msie') > -1 ||
+                        userAgent.indexOf('edge') > -1) {
+
+                        return 'video/webm;codecs=opus,vp8';
+                    }
+                    else {
+
+                        console.warn('using unknown browser'); return 'video/webm;codecs=opus,vp8';
+                    }
+                }
+            };
+            this.contextlocallivestream = null;
+            this.locallivestream = function () {
 
                 var __selfvideo = this;
 
@@ -53,20 +74,33 @@ export function initblazorvideo(dotnetobjref, id) {
                         });
                 };
             };
-            this.newvideo = function () {
+            this.newlocallivestream = function () {
 
                 try {
 
-                    __selfblazorvideomap.contextvideo = new __selfblazorvideomap.video();
-                    __selfblazorvideomap.contextvideo.initusermedia();
+                    __selfblazorvideomap.contextlocallivestream = new __selfblazorvideomap.locallivestream();
+                    __selfblazorvideomap.contextlocallivestream.initusermedia();
                 }
                 catch (ex) {
 
                     console.warn(ex);
                 }
             };
+            this.base64toblob = function (base64str) {
+
+                var bytestring = atob(base64str.split('base64,')[1]);
+                var arraybuffer = new ArrayBuffer(bytestring.length);
+
+                var bytes = new Uint8Array(arraybuffer);
+                for (var i = 0; i < bytestring.length; i++) {
+                    bytes[i] = bytestring.charCodeAt(i);
+                }
+
+                var blob = new Blob([arraybuffer], { type: __selfblazorvideomap.videomimetypeobject.mimetype });
+                return blob;
+            };
         }
     }
 
-    return new __obj.blazorvideomap(dotnetobjref, id);
+    return new __obj.blazorvideomap(dotnetobjref, id, type);
 };

@@ -10,9 +10,11 @@ namespace BlazorVideo
 
         [Parameter] public string Id { get; set; }
 
+        [Parameter] public BlazorVideoType Type { get; set; }
+
         protected override async Task OnInitializedAsync()
         {
-            await this.BlazorVideoService.InitBlazorVideo(this.Id);
+            await this.BlazorVideoService.InitBlazorVideo(this.Id, this.Type);
             await base.OnInitializedAsync();
         }
 

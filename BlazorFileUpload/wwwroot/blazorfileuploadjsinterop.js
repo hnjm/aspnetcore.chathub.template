@@ -2,7 +2,7 @@
 
     var __obj = {
 
-        initfileuploaddropzone: function (dotnetobjref, inputFileId, elementId) {
+        fileuploadmap: function (dotnetobjref, inputFileId, elementId) {
 
             document.getElementById(elementId).addEventListener('dragover', function (event) {
 
@@ -28,7 +28,5 @@
         },
     };
 
-    return new __obj.initfileuploaddropzone(dotnetobjref, inputFileId, elementId);
+    return new __obj.fileuploadmap(dotnetobjref, inputFileId, elementId);
 }
-
-    
