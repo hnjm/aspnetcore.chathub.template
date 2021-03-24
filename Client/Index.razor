@@ -325,7 +325,12 @@
                                     </WindowTitle>
                                     <WindowLivestream>
 
-                                        <BlazorVideoComponent Id="@room.Id.ToString()" Type="@BlazorVideoType.LocalLivestream"></BlazorVideoComponent>
+                                        @{
+                                            BlazorVideoType videoType = ChatHubService.ConnectedUser.UserId == room.CreatorId ? BlazorVideoType.LocalLivestream : BlazorVideoType.RemoteLivestream;
+                                        }
+
+                                        <BlazorVideoComponent Id="@room.Id.ToString()" Type="@videoType" BackgroundColor="@room.BackgroundColor" Name="@room.Title"></BlazorVideoComponent>
+
                                         <!--<VideoComponent ChatHubRoom="@room" ItemIndex="@room_index"></VideoComponent>-->
 
                                     </WindowLivestream>
@@ -823,7 +828,7 @@
                         </WindowContainer>
 
                     }
-                }
+                        }
 
             </TabContent>
         </TabItem>

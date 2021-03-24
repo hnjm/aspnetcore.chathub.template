@@ -5,7 +5,7 @@ export function initblazorvideo(dotnetobjref, id, type) {
         blazorvideomap: function (dotnetobjref, id, type) {
             
             var __selfblazorvideomap = this;
-            this.videoelementidprefix = '#video-element-id-';
+            this.locallivestreamelementidprefix = '#local-livestream-element-id-';
             this.videomimetypeobject = {
 
                 get mimetype() {
@@ -44,7 +44,7 @@ export function initblazorvideo(dotnetobjref, id, type) {
                     },
                 };
 
-                this.videoelementid = __selfblazorvideomap.videoelementidprefix + id;
+                this.videoelementid = __selfblazorvideomap.locallivestreamelementidprefix + id;
                 this.getvideoelement = function () {
                     return document.querySelector(__selfvideo.videoelementid);
                 };

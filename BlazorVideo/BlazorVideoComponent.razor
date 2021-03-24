@@ -1,7 +1,107 @@
 ﻿@namespace BlazorVideo
 @inherits BlazorVideoComponentBase
 
-<video id="video-element-id-@Id" class="blazor-video-item mb-0 w-100 h-100" controls></video>
+@using System
+
+<style type="text/css">
+
+    .video-item-@Id {
+        line-height: 14px;
+    }
+
+    .video-item-@Id .video-item-devices {
+        display: none;
+    }
+
+    .video-item-@Id:hover .video-item-devices {
+        display: block;
+    }
+
+    .video-item-resize-container-@Id {
+        width: 240px;
+        height: 180px;
+        resize: both;
+        overflow: hidden;
+        background-color: @BackgroundColor;
+    }
+
+    .video-item-resize-container:hover .video-ellipsis {
+        display: initial;
+    }
+
+    .video-item-ellipsis {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        z-index: 1;
+        display: initial;
+    }
+
+    .background-gradient-blue {
+        background-image: linear-gradient(to bottom, rgba(255,255,255,1), rgba(49,94,182,1));
+    }
+
+    .background-gradient-red {
+        background-image: linear-gradient(to bottom, rgba(255,255,255,1), rgba(182,94,49,1));
+    }
+
+</style>
+
+<div class="bd-highlight video-item-@Id p-1">
+
+    @if (Type == BlazorVideoType.LocalLivestream)
+    {
+        <div>
+            <div class="video-item-resize-container-@Id position-relative">
+
+                <div class="align-items-center justify-content-center px-3 h-100 @(!BlazorVideoService.BlazorVideoMaps.Any(item => item.Value.Id == Id) ? "d-flex" : "d-none")">
+                    <button class="btn btn-lg btn-link text-white bg-dark p-sm-2" type="button" @onclick="async () => BlazorVideoService.NewLocalLivestream(Id)">
+                        ▷ @Name
+                    </button>
+                </div>
+
+                <div class="w-100 h-100 @(!BlazorVideoService.BlazorVideoMaps.Any(item => item.Value.Id == Id) ? "d-none" : "d-block")">
+                    <div class="text-white px-2 py-2 mb-0 position-absolute video-item-ellipsis">
+                        <small>[loc.] @Name</small>
+                    </div>
+                    <video id="local-livestream-element-id-@Id" class="blazor-video-item mb-0 w-100 h-100" controls></video>
+
+                    <div class="position-absolute video-item-devices" style="right: 0px; top: 0px;">
+                        <div class="input-group" style="padding: 0.25rem 0.25rem 0.125rem 0.25rem">
+                            <select id="chathubs-audio-source-local-@Id" class="custom-select custom-select-sm" style="width: 120px !important;"></select>
+                        </div>
+                        <div class="input-group" style="padding: 0.125rem 0.25rem 0.25rem 0.25rem">
+                            <select id="chathubs-video-source-local-@Id" class="custom-select custom-select-sm" style="width: 120px !important;"></select>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    }
+    @if (Type == BlazorVideoType.RemoteLivestream)
+    {
+        <div>
+            <div class="video-item-resize-container-@Id position-relative">
+
+                <div class="align-items-center justify-content-center px-3 h-100 @(!BlazorVideoService.BlazorVideoMaps.Any(item => item.Value.Id == Id) ? "d-flex" : "d-none")">
+                    <button class="btn btn-lg btn-link text-white bg-dark p-sm-2" type="button" @onclick="async () => BlazorVideoService.NewLocalLivestream(Id)">
+                        ▷ @Name
+                    </button>
+                </div>
+
+                <div class="w-100 h-100 @(!BlazorVideoService.BlazorVideoMaps.Any(item => item.Value.Id == Id) ? "d-none" : "d-block")">
+                    <div class="text-white px-2 py-2 mb-0 position-absolute video-item-ellipsis">
+                        <small>[rem.] @Name</small>
+                    </div>
+                    <video id="remote-livestream-element-id-@Id" class="blazor-video-item mb-0 w-100 h-100" controls></video>
+                </div>
+
+            </div>
+        </div>
+    }
+
+</div>
 
 @code {
 

@@ -7,10 +7,10 @@ namespace BlazorVideo
     {
 
         [Inject] public BlazorVideoService BlazorVideoService { get; set; }
-
         [Parameter] public string Id { get; set; }
-
+        [Parameter] public string Name { get; set; }
         [Parameter] public BlazorVideoType Type { get; set; }
+        [Parameter] public string BackgroundColor { get; set; }
 
         protected override async Task OnInitializedAsync()
         {
