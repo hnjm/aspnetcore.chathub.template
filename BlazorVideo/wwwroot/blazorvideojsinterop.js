@@ -7,6 +7,8 @@ export function initblazorvideo(dotnetobjref, id, type) {
             var __selfblazorvideomap = this;
 
             this.locallivestreamelementidprefix = '#local-livestream-element-id-';
+            this.remotelivestreamelementidprefix = '#remote-livestream-element-id-';
+
             this.audiosourcelocalid = '#local-livestream-audio-source-';
             this.videosourcelocalid = '#local-livestream-video-source-';
 
@@ -32,6 +34,7 @@ export function initblazorvideo(dotnetobjref, id, type) {
                 }
             };
             this.contextlocallivestream = null;
+            this.contextremotelivestream = null;
             this.locallivestream = function () {
 
                 var __selflocallivestream = this;
@@ -267,11 +270,115 @@ export function initblazorvideo(dotnetobjref, id, type) {
                 };
 
             };
+            this.remotelivestream = function () {
+
+                var __selfremotelivestream = this;
+
+                this.videoelementid = __selfblazorvideomap.remotelivestreamelementidprefix + id;
+                this.getvideoelement = function () {
+                    return document.querySelector(__selfremotelivestream.videoelementid);
+                };
+
+                this.remotemediasequences = [];
+                this.mediasource = new MediaSource();
+                this.sourcebuffer = undefined;
+
+                this.mediasource.addEventListener('sourceopen', function (event) {
+
+                    if (!('MediaSource' in window) || !(window.MediaSource.isTypeSupported(__selfblazorvideomap.videomimetypeobject.mimetype))) {
+
+                        console.error('Unsupported MIME type or codec: ', __selfblazorvideomap.videomimetypeobject.mimetype);
+                    }
+
+                    __selfremotelivestream.sourcebuffer = __selfremotelivestream.mediasource.addSourceBuffer(__selfblazorvideomap.videomimetypeobject.mimetype);
+                    __selfremotelivestream.sourcebuffer.mode = 'sequence';
+
+                    __selfremotelivestream.sourcebuffer.addEventListener('updatestart', function (e) { });
+                    __selfremotelivestream.sourcebuffer.addEventListener('update', function (e) { });
+                    __selfremotelivestream.sourcebuffer.addEventListener('updateend', function (e) {
+
+                        if (e.currentTarget.buffered.length === 1) {
+
+                            var timestampOffset = __selfremotelivestream.sourcebuffer.timestampOffset;
+                            var end = e.currentTarget.buffered.end(0);
+                        }
+                    });
+                });
+                this.mediasource.addEventListener('sourceended', function (event) { console.log("on media source ended"); });
+                this.mediasource.addEventListener('sourceclose', function (event) { console.log("on media source close"); });
+
+                this.video = this.getvideoelement();
+                this.video.controls = true;
+                this.video.autoplay = true;
+                this.video.preload = 'auto';
+                this.video.muted = true;
+
+                try {
+                    this.video.srcObject = this.mediasource;
+                } catch (ex) {
+                    console.warn(ex);
+                    this.video.src = URL.createObjectURL(this.mediasource);
+                }
+
+                this.appendbuffer = async function (base64str) {
+
+                    try {
+
+                        console.log(base64str);
+                        var blob = __selfblazorvideomap.base64toblob(base64str);
+
+                        var reader = new FileReader();
+                        reader.onloadend = function (event) {
+
+                            var timeDiff = __selfremotelivestream.sourcebuffer.timestampOffset - __selfremotelivestream.video.currentTime;
+                            if (timeDiff > 1) {
+                                __selfremotelivestream.video.currentTime = __selfremotelivestream.sourcebuffer.timestampOffset - 0.42;
+
+                                if (__selfremotelivestream.video.paused) {
+
+                                    __selfremotelivestream.video.play();
+                                }
+                            }
+                            console.log('time diff: ' + timeDiff);
+
+                            __selfremotelivestream.remotemediasequences.push(reader.result);
+
+                            if (__selfremotelivestream.remotemediasequences.length >= 2) {
+
+                                __selfremotelivestream.remotemediasequences.shift();
+                            }
+
+                            if (!__selfremotelivestream.sourcebuffer.updating && __selfremotelivestream.mediasource.readyState === 'open') {
+
+                                var item = __selfremotelivestream.remotemediasequences.shift();
+                                __selfremotelivestream.sourcebuffer.appendBuffer(new Uint8Array(item));
+                            }
+                        }
+                        reader.readAsArrayBuffer(blob);
+                    }
+                    catch (ex) {
+                        console.error(ex);
+                    }
+                };
+                this.cancel = function () {
+
+                };
+            };
             this.initlocallivestream = async function () {
 
                 try {
                     __selfblazorvideomap.contextlocallivestream = new __selfblazorvideomap.locallivestream();
                     await __selfblazorvideomap.contextlocallivestream.initdevices();
+                }
+                catch (ex) {
+
+                    console.warn(ex);
+                }
+            };
+            this.initremotelivestream = function () {
+
+                try {
+                    __selfblazorvideomap.contextremotelivestream = new __selfblazorvideomap.remotelivestream();
                 }
                 catch (ex) {
 

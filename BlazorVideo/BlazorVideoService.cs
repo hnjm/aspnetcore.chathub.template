@@ -31,7 +31,15 @@ namespace BlazorVideo
             IJSObjectReference jsobjref = await this.Module.InvokeAsync<IJSObjectReference>("initblazorvideo", this.DotNetObjectRef, id, type.ToString().ToLower());
 
             this.AddBlazorVideoMap(id, type, jsobjref);
-            this.InitJsMapLocalLivestream(id);
+
+            if(type == BlazorVideoType.LocalLivestream)
+            {
+                this.InitLocalLivestream(id);
+            }
+            if(type == BlazorVideoType.RemoteLivestream)
+            {
+                this.InitRemoteLivestream(id);
+            }
         }
 
         public void AddBlazorVideoMap(string id, BlazorVideoType type, IJSObjectReference jsobjref)
@@ -49,7 +57,7 @@ namespace BlazorVideo
             }
         }
 
-        public void InitJsMapLocalLivestream(string id)
+        public void InitLocalLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
             keyvaluepair.Value.JsObjRef.InvokeVoidAsync("initlocallivestream");
@@ -80,6 +88,11 @@ namespace BlazorVideo
             keyvaluepair.Value.JsObjRef.InvokeVoidAsync("closelivestream", id);
         }
 
+        public void InitRemoteLivestream(string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("initremotelivestream");
+        }
         public void StartStreamingRemoteLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
@@ -110,7 +123,7 @@ namespace BlazorVideo
         public event EventHandler<string> OnPauseLivestreamTask;
 
         [JSInvokable("OnDataAvailable")]
-        public void OnDataAvailable(string dataURI, int id)
+        public void OnDataAvailable(string dataURI, string id)
         {
             this.OnDataAvailableEventHandler?.Invoke(typeof(BlazorVideoServiceExtension), new { dataURI = dataURI, id = id });
         }
