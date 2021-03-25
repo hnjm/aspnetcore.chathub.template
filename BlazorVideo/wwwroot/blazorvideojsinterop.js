@@ -33,8 +33,21 @@ export function initblazorvideo(dotnetobjref, id, type) {
                     }
                 }
             };
+            this.base64toblob = function (base64str) {
+
+                var bytestring = atob(base64str.split('base64,')[1]);
+                var arraybuffer = new ArrayBuffer(bytestring.length);
+
+                var bytes = new Uint8Array(arraybuffer);
+                for (var i = 0; i < bytestring.length; i++) {
+                    bytes[i] = bytestring.charCodeAt(i);
+                }
+
+                var blob = new Blob([arraybuffer], { type: __selfblazorvideomap.videomimetypeobject.mimetype });
+                return blob;
+            };
+
             this.contextlocallivestream = null;
-            this.contextremotelivestream = null;
             this.locallivestream = function () {
 
                 var __selflocallivestream = this;
@@ -270,6 +283,45 @@ export function initblazorvideo(dotnetobjref, id, type) {
                 };
 
             };
+            this.initlocallivestream = async function () {
+
+                try {
+                    __selfblazorvideomap.contextlocallivestream = new __selfblazorvideomap.locallivestream();
+                    await __selfblazorvideomap.contextlocallivestream.initdevices();
+                }
+                catch (ex) {
+
+                    console.warn(ex);
+                }
+            };
+            this.startbroadcastinglocallivestream = function () {
+
+                try {
+
+                    if (__selfblazorvideomap.contextlocallivestream != null) {
+
+                        __selfblazorvideomap.contextlocallivestream.initstream();
+                    }
+                }
+                catch (ex) {
+
+                    console.warn(ex);
+                }
+            };
+            this.startsequencelocallivestream = function () {
+
+                this.contextlocallivestream.startsequence();
+            };
+            this.stopsequencelocallivestream = function () {
+
+                this.contextlocallivestream.stopsequence();
+            };
+            this.closelocallivestream = function () {
+
+                this.contextlocallivestream.cancel();
+            };
+
+            this.contextremotelivestream = null;
             this.remotelivestream = function () {
 
                 var __selfremotelivestream = this;
@@ -364,17 +416,6 @@ export function initblazorvideo(dotnetobjref, id, type) {
 
                 };
             };
-            this.initlocallivestream = async function () {
-
-                try {
-                    __selfblazorvideomap.contextlocallivestream = new __selfblazorvideomap.locallivestream();
-                    await __selfblazorvideomap.contextlocallivestream.initdevices();
-                }
-                catch (ex) {
-
-                    console.warn(ex);
-                }
-            };
             this.initremotelivestream = function () {
 
                 try {
@@ -385,32 +426,9 @@ export function initblazorvideo(dotnetobjref, id, type) {
                     console.warn(ex);
                 }
             };
-            this.startbroadcastinglocallivestream = function () {
+            this.appendbufferremotelivestream = function (base64str) {
 
-                try {
-
-                    if (__selfblazorvideomap.contextlocallivestream != null) {
-
-                        __selfblazorvideomap.contextlocallivestream.initstream();
-                    }
-                }
-                catch (ex) {
-
-                    console.warn(ex);
-                }
-            };
-            this.base64toblob = function (base64str) {
-
-                var bytestring = atob(base64str.split('base64,')[1]);
-                var arraybuffer = new ArrayBuffer(bytestring.length);
-
-                var bytes = new Uint8Array(arraybuffer);
-                for (var i = 0; i < bytestring.length; i++) {
-                    bytes[i] = bytestring.charCodeAt(i);
-                }
-
-                var blob = new Blob([arraybuffer], { type: __selfblazorvideomap.videomimetypeobject.mimetype });
-                return blob;
+                this.contextremotelivestream.appendbuffer(base64str);
             };
         }
     }

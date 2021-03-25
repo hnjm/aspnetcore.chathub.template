@@ -71,12 +71,12 @@ namespace BlazorVideo
         public void StartSequenceLocalLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startsequence", id);
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startsequencelocallivestream");
         }
         public void StopSequenceLocalLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("stopsequence", id);
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("stopsequencelocallivestream");
         }
         public void ContinueLocalLivestream(string id)
         {
@@ -85,7 +85,7 @@ namespace BlazorVideo
         public void CloseLocalLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("closelivestream", id);
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("closelocallivestream");
         }
 
         public void InitRemoteLivestream(string id)
@@ -93,15 +93,10 @@ namespace BlazorVideo
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
             keyvaluepair.Value.JsObjRef.InvokeVoidAsync("initremotelivestream");
         }
-        public void StartStreamingRemoteLivestream(string id)
-        {
-            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startstreaming", id);
-        }
         public void AppendBufferRemoteLivestream(string dataURI, string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("appendbuffer", dataURI, id);
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("appendbufferremotelivestream", dataURI);
         }
 
         public async ValueTask DisposeAsync()
