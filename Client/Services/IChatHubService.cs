@@ -18,7 +18,6 @@ namespace Oqtane.ChatHubs.Services
         NavigationManager NavigationManager { get; set; }
         SiteState SiteState { get; set; }
         IJSRuntime JSRuntime { get; set; }
-        VideoService VideoService { get; set; }
 
         HubConnection Connection { get; set; }
         ChatHubUser ConnectedUser { get; set; }
@@ -34,10 +33,6 @@ namespace Oqtane.ChatHubs.Services
 
         List<ChatHubUser> IgnoredUsers { get; set; }
         List<ChatHubUser> IgnoredByUsers { get; set; }
-
-        Dictionary<int, dynamic> LocalStreamTasks { get; set; }
-
-        List<int> RemoteStreamTasks { get; set; }
 
         System.Timers.Timer GetLobbyRoomsTimer { get; set; }
 
@@ -65,14 +60,6 @@ namespace Oqtane.ChatHubs.Services
         void RegisterHubConnectionHandlers();
 
         Task ConnectAsync();
-
-        Task StartVideoChat(int roomId);
-
-        Task StopVideoChat(int roomId);
-
-        Task DisposeStreamTasksAsync();
-
-        Task RestartStreamTaskIfExists(int roomId);
 
         Task EnterChatRoom(int roomId);
 

@@ -21,6 +21,7 @@ using BlazorDraggableList;
 using BlazorFileUpload;
 using Oqtane.Shared.Extensions;
 using BlazorBrowserResize;
+using BlazorVideo;
 
 namespace Oqtane.ChatHubs
 {
@@ -34,12 +35,12 @@ namespace Oqtane.ChatHubs
         [Inject] protected ISettingService SettingService { get; set; }
         [Inject] protected BlazorAlertsService BlazorAlertsService { get; set; }
         [Inject] protected IChatHubService ChatHubService { get; set; }
-        [Inject] protected VideoService VideoService { get; set; }
         [Inject] protected BlazorBrowserResizeService BrowserResizeService { get; set; }
         [Inject] protected ScrollService ScrollService { get; set; }
         [Inject] protected CookieService CookieService { get; set; }
         [Inject] protected BlazorDraggableListService BlazorDraggableListService { get; set; }
         [Inject] protected BlazorFileUploadService BlazorFileUploadService { get; set; }
+        [Inject] protected BlazorVideoService BlazorVideoService { get; set; }
 
         public int MessageWindowHeight { get; set; }
         public int UserlistWindowHeight { get; set; }
@@ -144,8 +145,8 @@ namespace Oqtane.ChatHubs
                     var items = this.ChatHubService.Rooms.Swap(e.DraggableItemOldIndex, e.DraggableItemNewIndex);
                     this.ChatHubService.Rooms = items.ToList<ChatHubRoom>();
 
-                    await this.ChatHubService.RestartStreamTaskIfExists(this.ChatHubService.Rooms[e.DraggableItemOldIndex].Id);
-                    await this.ChatHubService.RestartStreamTaskIfExists(this.ChatHubService.Rooms[e.DraggableItemNewIndex].Id);
+                    await this.BlazorVideoService.RestartStreamTaskIfExists(this.ChatHubService.Rooms[e.DraggableItemOldIndex].Id.ToString());
+                    await this.BlazorVideoService.RestartStreamTaskIfExists(this.ChatHubService.Rooms[e.DraggableItemNewIndex].Id.ToString());
 
                     this.UpdateUIStateHasChanged();
                 }
@@ -427,7 +428,7 @@ namespace Oqtane.ChatHubs
         {
             foreach (var item in this.ChatHubService.Rooms)
             {
-                await this.ChatHubService.RestartStreamTaskIfExists(item.Id);
+                await this.BlazorVideoService.RestartStreamTaskIfExists(item.Id.ToString());
             }
         }
 

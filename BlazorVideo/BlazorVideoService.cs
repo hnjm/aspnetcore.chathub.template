@@ -3,6 +3,7 @@ using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace BlazorVideo
 {
@@ -17,12 +18,15 @@ namespace BlazorVideo
         public DotNetObjectReference<BlazorVideoServiceExtension> DotNetObjectRef;
         public BlazorVideoServiceExtension BlazorVideoServiceExtension;
 
-        public event EventHandler<string> OnContinueLivestreamTask;
+        public event Action RunUpdateUI;
+
+        public Dictionary<string, dynamic> LocalStreamTasks { get; set; } = new Dictionary<string, dynamic>();
+        public List<string> RemoteStreamTasks { get; set; } = new List<string>();
 
         public BlazorVideoService(IJSRuntime jsRuntime)
         {
             this.JsRuntime = jsRuntime;
-            this.BlazorVideoServiceExtension = new BlazorVideoServiceExtension();
+            this.BlazorVideoServiceExtension = new BlazorVideoServiceExtension(this);
             this.DotNetObjectRef = DotNetObjectReference.Create(this.BlazorVideoServiceExtension);
         }
         public async Task InitBlazorVideo(string id, BlazorVideoType type)
@@ -36,17 +40,13 @@ namespace BlazorVideo
             {
                 this.InitLocalLivestream(id);
             }
-            if(type == BlazorVideoType.RemoteLivestream)
-            {
-                this.InitRemoteLivestream(id);
-            }
         }
 
         public void AddBlazorVideoMap(string id, BlazorVideoType type, IJSObjectReference jsobjref)
         {
             if(!this.BlazorVideoMaps.Any(item => item.Value.Id == id))
             {
-                this.BlazorVideoMaps.Add(new KeyValuePair<Guid, BlazorVideoModel>(Guid.NewGuid(), new BlazorVideoModel() { Id = id, Type = type, JsObjRef = jsobjref }));
+                this.BlazorVideoMaps.Add(new KeyValuePair<Guid, BlazorVideoModel>(Guid.NewGuid(), new BlazorVideoModel() { Id = id, Type = type, JsObjRef = jsobjref, VideoOverlay = true }));
             }
         }
         public void RemoveBlazorVideoMap(Guid guid)
@@ -62,36 +62,37 @@ namespace BlazorVideo
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
             keyvaluepair.Value.JsObjRef.InvokeVoidAsync("initlocallivestream");
         }
-        public void StartBroadcastingLocalLivestream(string id)
+
+        public async Task StartSequenceLocalLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, VideoOverlay = true };
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startbroadcastinglocallivestream");
+            await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startsequencelocallivestream");
         }
-        public void StartSequenceLocalLivestream(string id)
+        public async Task StopSequenceLocalLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startsequencelocallivestream");
+            await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("stopsequencelocallivestream"); 
         }
-        public void StopSequenceLocalLivestream(string id)
+        public async Task ContinueLocalLivestreamAsync(string id)
+        {
+            List<KeyValuePair<string, dynamic>> localList = this.LocalStreamTasks.Where(item => item.Key.ToString() == id).ToList();
+            List<string> remoteList = this.RemoteStreamTasks.Where(item => item.ToString() == id).ToList();
+
+            if (localList.Any() || remoteList.Any())
+            {
+                await this.StartVideoChat(id);
+            }
+        }
+        public async Task CloseLocalLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("stopsequencelocallivestream");
-        }
-        public void ContinueLocalLivestream(string id)
-        {
-            this.OnContinueLivestreamTask?.Invoke(typeof(BlazorVideoService), id);
-        }
-        public void CloseLocalLivestream(string id)
-        {
-            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("closelocallivestream");
+            await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("closelocallivestream");
         }
 
-        public void InitRemoteLivestream(string id)
+        public async Task InitRemoteLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("initremotelivestream");
+            await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("initremotelivestream");
         }
         public void AppendBufferRemoteLivestream(string dataURI, string id)
         {
@@ -99,9 +100,137 @@ namespace BlazorVideo
             keyvaluepair.Value.JsObjRef.InvokeVoidAsync("appendbufferremotelivestream", dataURI);
         }
 
+        public async Task StartVideoChat(string roomId)
+        {
+            try
+            {
+                var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == roomId);
+                await this.StopVideoChat(keyvaluepair.Value.Id);
+
+                if (keyvaluepair.Value.Type == BlazorVideoType.LocalLivestream)
+                {
+                    await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startbroadcastinglocallivestream");
+                    this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, VideoOverlay = false };
+                    this.RunUpdateUI.Invoke();
+
+                    CancellationTokenSource tokenSource = new CancellationTokenSource();
+                    CancellationToken token = tokenSource.Token;
+                    Task task = new Task(async () => await this.StreamTaskImplementation(keyvaluepair.Value.Id, token), token);
+                    this.AddLocalStreamTask(keyvaluepair.Value.Id, task, tokenSource);
+                    task.Start();
+                }
+                else if(keyvaluepair.Value.Type == BlazorVideoType.RemoteLivestream)
+                {
+                    this.AddRemoteStreamTask(roomId);
+                    await this.InitRemoteLivestream(keyvaluepair.Value.Id);
+
+                    this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, VideoOverlay = false };
+                    this.RunUpdateUI.Invoke();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+        public async Task StopVideoChat(string videoMap)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == videoMap);
+            if (keyvaluepair.Value.Type == BlazorVideoType.LocalLivestream)
+            {
+                this.RemoveLocalStreamTask(videoMap);
+                await this.CloseLocalLivestream(videoMap);
+
+                this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, VideoOverlay = true };
+                this.RunUpdateUI.Invoke();
+            }
+            else if (keyvaluepair.Value.Type == BlazorVideoType.RemoteLivestream)
+            {
+                this.RemoveRemoteStreamTask(videoMap);
+
+                this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, VideoOverlay = true };
+                this.RunUpdateUI.Invoke();
+            }
+        }
+        public async Task RestartStreamTaskIfExists(string roomId)
+        {
+            if (this.LocalStreamTasks.Any(item => item.Key == roomId) || this.RemoteStreamTasks.Any(item => item == roomId))
+            {
+                await this.StartVideoChat(roomId);
+            }
+
+            //this.RunUpdateUI();
+        }
+        public void AddLocalStreamTask(string roomId, Task task, CancellationTokenSource tokenSource)
+        {
+            this.RemoveLocalStreamTask(roomId);
+            dynamic obj = new { task = task, tokenSource = tokenSource };
+            this.LocalStreamTasks.Add(roomId, obj);
+
+            //this.RunUpdateUI();
+        }
+        public void RemoveLocalStreamTask(string roomId)
+        {
+            List<KeyValuePair<string, dynamic>> list = this.LocalStreamTasks.Where(item => item.Key == roomId).ToList();
+            if (list.Any())
+            {
+                KeyValuePair<string, dynamic> keyValuePair = list.FirstOrDefault();
+                dynamic obj = keyValuePair.Value;
+
+                obj.tokenSource?.Cancel();
+                obj.task?.Dispose();
+
+                this.LocalStreamTasks.Remove(keyValuePair.Key);
+            }
+        }
+        public void AddRemoteStreamTask(string roomId)
+        {
+            var items = this.RemoteStreamTasks.Where(id => id == roomId);
+            if (!items.Any())
+            {
+                this.RemoteStreamTasks.Add(roomId);
+
+                //this.RunUpdateUI();
+            }
+        }
+        public void RemoveRemoteStreamTask(string roomId)
+        {
+            var items = this.RemoteStreamTasks.Where(id => id == roomId);
+            if (items.Any())
+            {
+                this.RemoteStreamTasks.Remove(roomId);
+            }
+        }
+        public async Task StreamTaskImplementation(string roomId, CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                try
+                {
+                    await this.StopSequenceLocalLivestream(roomId);
+                    await this.StartSequenceLocalLivestream(roomId);
+
+                    await Task.Delay(2000);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                }
+            }
+        }
+        public async Task DisposeStreamTasksAsync()
+        {
+            foreach (var task in LocalStreamTasks)
+            {
+                await this.StopVideoChat(task.Key);
+            }
+        }
+
         public async ValueTask DisposeAsync()
         {
-            foreach(var keyvaluepair in this.BlazorVideoMaps)
+            await this.DisposeStreamTasksAsync();
+
+            foreach (var keyvaluepair in this.BlazorVideoMaps)
             {
                 await keyvaluepair.Value.JsObjRef.DisposeAsync();
             }
@@ -114,19 +243,34 @@ namespace BlazorVideo
     public class BlazorVideoServiceExtension
     {
 
-        public event EventHandler<dynamic> OnDataAvailableEventHandler;
-        public event EventHandler<string> OnPauseLivestreamTask;
+        public BlazorVideoService BlazorVideoService { get; set; }
+        public event Action<string ,string> OnDataAvailableEventHandler;
+
+        public BlazorVideoServiceExtension(BlazorVideoService blazorVideoService)
+        {
+            this.BlazorVideoService = blazorVideoService;
+        }
 
         [JSInvokable("OnDataAvailable")]
         public void OnDataAvailable(string dataURI, string id)
         {
-            this.OnDataAvailableEventHandler?.Invoke(typeof(BlazorVideoServiceExtension), new { dataURI = dataURI, id = id });
+            if(!string.IsNullOrEmpty(dataURI) && !string.IsNullOrEmpty(id))
+            {
+                this.OnDataAvailableEventHandler.Invoke(dataURI, id);
+            }
         }
 
         [JSInvokable("PauseLivestreamTask")]
         public void PauseLivestreamTask(string id)
         {
-            this.OnPauseLivestreamTask?.Invoke(typeof(BlazorVideoServiceExtension), id);
+            List<KeyValuePair<string, dynamic>> list = this.BlazorVideoService.LocalStreamTasks.Where(item => item.Key == id).ToList();
+            if (list.Any())
+            {
+                KeyValuePair<string, dynamic> keyValuePair = list.FirstOrDefault();
+                dynamic obj = keyValuePair.Value;
+                obj.tokenSource.Cancel();
+                obj.task.Dispose();
+            }
         }
 
     }

@@ -35,7 +35,6 @@ namespace Oqtane.ChatHubs.Services
         public NavigationManager NavigationManager { get; set; }
         public SiteState SiteState { get; set; }
         public IJSRuntime JSRuntime { get; set; }
-        public VideoService VideoService { get; set; }
         public ScrollService ScrollService { get; set; }
         public BlazorAlertsService BlazorAlertsService { get; set; }
         public BlazorDraggableListService BlazorDraggableListService { get; set; }
@@ -54,8 +53,6 @@ namespace Oqtane.ChatHubs.Services
         public List<ChatHubInvitation> Invitations { get; set; } = new List<ChatHubInvitation>();
         public List<ChatHubUser> IgnoredUsers { get; set; } = new List<ChatHubUser>();
         public List<ChatHubUser> IgnoredByUsers { get; set; } = new List<ChatHubUser>();
-        public Dictionary<int, dynamic> LocalStreamTasks { get; set; } = new Dictionary<int, dynamic>();
-        public List<int> RemoteStreamTasks { get; set; } = new List<int>();
 
         public System.Timers.Timer GetLobbyRoomsTimer { get; set; } = new System.Timers.Timer();
 
@@ -80,27 +77,24 @@ namespace Oqtane.ChatHubs.Services
         public event EventHandler<dynamic> OnRemoveWhitelistUserEvent;
         public event EventHandler<dynamic> OnAddBlacklistUserEvent;
         public event EventHandler<dynamic> OnRemoveBlacklistUserEvent;
-        public event EventHandler<dynamic> OnDownloadBytes;
+        public event EventHandler<dynamic> OnDownloadBytesEvent;
         public event EventHandler<int> OnClearHistoryEvent;
         public event EventHandler<ChatHubUser> OnDisconnectEvent;
         public event EventHandler<dynamic> OnExceptionEvent;
 
-        public ChatHubService(HttpClient httpClient, SiteState siteState, NavigationManager navigationManager, IJSRuntime JSRuntime, VideoService videoService, ScrollService scrollService, BlazorAlertsService blazorAlertsService, BlazorDraggableListService blazorDraggableListService, BlazorBrowserResizeService browserResizeService, BlazorVideoService blazorVideoService ) : base (httpClient)
+        public ChatHubService(HttpClient httpClient, SiteState siteState, NavigationManager navigationManager, IJSRuntime JSRuntime, ScrollService scrollService, BlazorAlertsService blazorAlertsService, BlazorDraggableListService blazorDraggableListService, BlazorBrowserResizeService browserResizeService, BlazorVideoService blazorVideoService ) : base (httpClient)
         {
             this.HttpClient = httpClient;
             this.SiteState = siteState;
             this.NavigationManager = navigationManager;
             this.JSRuntime = JSRuntime;
-            this.VideoService = videoService;
             this.ScrollService = scrollService;
             this.BlazorAlertsService = blazorAlertsService;
             this.BlazorDraggableListService = blazorDraggableListService;
             this.BrowserResizeService = browserResizeService;
             this.BlazorVideoService = blazorVideoService;
 
-            this.VideoService.VideoServiceExtension.OnDataAvailableEventHandler += async (object sender, dynamic e) => await OnDataAvailableEventHandlerExecute(e.dataURI, e.roomId, e.dataType);
-            this.VideoService.VideoServiceExtension.OnPauseLivestreamTask += (object sender, int e) => OnPauseLivestreamTaskExecute(sender, e);
-            this.VideoService.OnContinueLivestreamTask += (object sender, int e) => OnContinueLivestreamTaskExecute(sender, e);
+            this.BlazorVideoService.BlazorVideoServiceExtension.OnDataAvailableEventHandler += async (string data, string id) => await OnDataAvailableEventHandlerExecute(data, id);
 
             this.BlazorAlertsService.OnAlertConfirmed += OnAlertConfirmedExecute;
 
@@ -123,7 +117,7 @@ namespace Oqtane.ChatHubs.Services
             this.OnRemoveWhitelistUserEvent += OnRemoveWhitelistUserExecute;
             this.OnAddBlacklistUserEvent += OnAddBlacklistUserExecute;
             this.OnRemoveBlacklistUserEvent += OnRemoveBlacklistUserExecute;
-            this.OnDownloadBytes += OnDownloadBytesExecuteAsync;
+            this.OnDownloadBytesEvent += OnDownloadBytesExecuteAsync;
             this.OnRemoveIgnoredByUserEvent += OnRemoveIgnoredByUserExecute;
             this.OnClearHistoryEvent += OnClearHistoryExecute;
             this.OnDisconnectEvent += OnDisconnectExecute;
@@ -201,7 +195,7 @@ namespace Oqtane.ChatHubs.Services
             this.Connection.On("RemoveIgnoredUser", (ChatHubUser ignoredUser) => OnRemoveIgnoredUserEvent(this, ignoredUser));
             this.Connection.On("AddIgnoredByUser", (ChatHubUser ignoredUser) => OnAddIgnoredByUserEvent(this, ignoredUser));
             this.Connection.On("RemoveIgnoredByUser", (ChatHubUser ignoredUser) => OnRemoveIgnoredByUserEvent(this, ignoredUser));
-            this.Connection.On("DownloadBytes", (string dataURI, int roomId, string dataType) => OnDownloadBytes(this, new { dataURI = dataURI, roomId = roomId, dataType = dataType }));
+            this.Connection.On("DownloadBytes", (string dataURI, string id) => OnDownloadBytesEvent(this, new { dataURI = dataURI, id = id}));
             this.Connection.On("AddModerator", (ChatHubModerator moderator, int roomId) => OnAddModeratorEvent(this, new { moderator = moderator, roomId = roomId }));
             this.Connection.On("RemoveModerator", (ChatHubModerator moderator, int roomId) => OnRemoveModeratorEvent(this, new { moderator = moderator, roomId = roomId }));
             this.Connection.On("AddWhitelistUser", (ChatHubWhitelistUser whitelistUser, int roomId) => OnAddWhitelistUserEvent(this, new { whitelistUser = whitelistUser, roomId = roomId }));
@@ -229,132 +223,12 @@ namespace Oqtane.ChatHubs.Services
                 }
             });
         }
-
-        public async Task StartVideoChat(int roomId)
-        {
-
-            this.BlazorVideoService.StartBroadcastingLocalLivestream(roomId.ToString());
-
-            try
-            {
-
-                /*
-                var room = this.Rooms.FirstOrDefault(item => item.Id == roomId);
-                await this.StopVideoChat(room.Id);
-
-                if (room.CreatorId == this.ConnectedUser.UserId)
-                {
-                    await this.VideoService.StartBroadcasting(room.Id);
-
-                    CancellationTokenSource tokenSource = new CancellationTokenSource();
-                    CancellationToken token = tokenSource.Token;
-                    Task task = new Task(async () => await this.StreamTaskImplementation(room.Id, token), token);
-                    this.AddLocalStreamTask(room.Id, task, tokenSource);
-                    task.Start();
-                }
-                else
-                {
-                    this.AddRemoteStreamTask(roomId);
-                    await this.VideoService.StartStreaming(room.Id);
-                }
-                */
-            }
-            catch (Exception ex)
-            {
-                this.HandleException(ex);
-            }
-        }
-        public async Task StopVideoChat(int roomId)
-        {
-            var room = this.Rooms.FirstOrDefault(item => item.Id == roomId);
-            if (room.CreatorId == this.ConnectedUser.UserId)
-            {
-                this.RemoveLocalStreamTask(roomId);
-                await this.VideoService.CloseLivestream(roomId);
-            }
-            else
-            {
-                this.RemoveRemoteStreamTask(roomId);
-                await this.VideoService.CloseLivestream(roomId);
-            }
-        }
-        public async Task RestartStreamTaskIfExists(int roomId)
-        {
-            if (this.LocalStreamTasks.Any(item => item.Key == roomId) || this.RemoteStreamTasks.Any(item => item == roomId))
-            {
-                await this.StartVideoChat(roomId);
-            }
-
-            this.RunUpdateUI();
-        }
-        public void AddLocalStreamTask(int roomId, Task task, CancellationTokenSource tokenSource)
-        {
-            this.RemoveLocalStreamTask(roomId);
-
-            dynamic obj = new { task = task, tokenSource = tokenSource };
-            this.LocalStreamTasks.Add(roomId, obj);
-            this.RunUpdateUI();
-        }
-        public void RemoveLocalStreamTask(int roomId)
-        {
-            List<KeyValuePair<int, dynamic>> list = this.LocalStreamTasks.Where(item => item.Key == roomId).ToList();
-            if (list.Any())
-            {
-                KeyValuePair<int, dynamic> keyValuePair = list.FirstOrDefault();
-                dynamic obj = keyValuePair.Value;
-
-                obj.tokenSource?.Cancel();
-                obj.task?.Dispose();
-
-                this.LocalStreamTasks.Remove(keyValuePair.Key);
-            }
-        }
-        public void AddRemoteStreamTask(int roomId)
-        {
-            var items = this.RemoteStreamTasks.Where(id => id == roomId);
-            if(!items.Any())
-            {
-                this.RemoteStreamTasks.Add(roomId);
-                this.RunUpdateUI();
-            }
-        }
-        public void RemoveRemoteStreamTask(int roomId)
-        {
-            var items = this.RemoteStreamTasks.Where(id => id == roomId);
-            if (items.Any())
-            {
-                this.RemoteStreamTasks.Remove(roomId);
-            }
-        }
-        public async Task StreamTaskImplementation(int roomId, CancellationToken token)
-        {
-            while (!token.IsCancellationRequested)
-            {
-                try
-                {
-                    await this.VideoService.StopSequence(roomId);
-                    await this.VideoService.StartSequence(roomId);
-
-                    await Task.Delay(2000);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                }
-            }
-        }
-        public async Task DisposeStreamTasksAsync()
-        {
-            foreach(var task in LocalStreamTasks)
-            {
-                await this.StopVideoChat(task.Key);
-            }
-        }
-        public async Task OnDataAvailableEventHandlerExecute(string dataURI, int roomId, string dataType)
+        
+        public async Task OnDataAvailableEventHandlerExecute(string dataURI, string roomId)
         {
             try
             {
-                if(this.Connection?.State == HubConnectionState.Connected)
+                if (this.Connection?.State == HubConnectionState.Connected)
                 {
                     int maxLength = 4200;
                     async IAsyncEnumerable<string> broadcastData()
@@ -365,7 +239,7 @@ namespace Oqtane.ChatHubs.Services
                         }
                     }
 
-                    await this.Connection.SendAsync("UploadBytes", broadcastData(), roomId, dataType).ContinueWith((task) =>
+                    await this.Connection.SendAsync("UploadBytes", broadcastData(), roomId).ContinueWith((task) =>
                     {
                         if (task.IsCompleted)
                         {
@@ -379,36 +253,14 @@ namespace Oqtane.ChatHubs.Services
                 Console.WriteLine(ex.Message);
             }
         }
-        public void OnPauseLivestreamTaskExecute(object sender, int roomId)
-        {
-            List<KeyValuePair<int, dynamic>> list = this.LocalStreamTasks.Where(item => item.Key == roomId).ToList();
-            if (list.Any())
-            {
-                KeyValuePair<int, dynamic> keyValuePair = list.FirstOrDefault();
-                dynamic obj = keyValuePair.Value;
-                obj.tokenSource.Cancel();
-                obj.task.Dispose();
-            }
-        }
-        public async Task OnContinueLivestreamTaskExecute(object sender, int roomId)
-        {
-            List<KeyValuePair<int, dynamic>> localList = this.LocalStreamTasks.Where(item => item.Key == roomId).ToList();
-            List<int> remoteList = this.RemoteStreamTasks.Where(item => item == roomId).ToList();
-
-            if (localList.Any() || remoteList.Any())
-            {
-                await this.StartVideoChat(roomId);
-            }
-        }
-        public async void OnDownloadBytesExecuteAsync(object sender, dynamic e)
+        public void OnDownloadBytesExecuteAsync(object sender, dynamic e)
         {
             string dataURI = e.dataURI;
-            int roomId = e.roomId;
-            string dataType = e.dataType;
+            string id = e.id;
 
             try
             {
-                await this.VideoService.AppendBuffer(dataURI, roomId, dataType);
+                this.BlazorVideoService.AppendBufferRemoteLivestream(dataURI, id);
             }
             catch (Exception ex)
             {
@@ -802,10 +654,7 @@ namespace Oqtane.ChatHubs.Services
 
         public void Dispose()
         {
-            this.VideoService.VideoServiceExtension.OnDataAvailableEventHandler -= async (object sender, dynamic e) => await OnDataAvailableEventHandlerExecute(e.dataURI, e.roomId, e.dataType);
-            this.VideoService.VideoServiceExtension.OnPauseLivestreamTask -= (object sender, int e) => OnPauseLivestreamTaskExecute(sender, e);
-            this.VideoService.OnContinueLivestreamTask -= (object sender, int e) => OnContinueLivestreamTaskExecute(sender, e);
-            this.DisposeStreamTasksAsync();
+            this.BlazorVideoService.BlazorVideoServiceExtension.OnDataAvailableEventHandler -= async (string data, string id) => await OnDataAvailableEventHandlerExecute(data, id);
 
             this.BlazorAlertsService.OnAlertConfirmed -= OnAlertConfirmedExecute;
 
@@ -824,7 +673,7 @@ namespace Oqtane.ChatHubs.Services
             this.OnAddIgnoredByUserEvent -= OnAddIgnoredByUserExecute;
             this.OnAddModeratorEvent -= OnAddModeratorExecute;
             this.OnRemoveModeratorEvent -= OnRemoveModeratorExecute;
-            this.OnDownloadBytes -= OnDownloadBytesExecuteAsync;
+            this.OnDownloadBytesEvent -= OnDownloadBytesExecuteAsync;
             this.OnRemoveIgnoredByUserEvent -= OnRemoveIgnoredByUserExecute;
             this.OnClearHistoryEvent -= OnClearHistoryExecute;
             this.OnDisconnectEvent -= OnDisconnectExecute;

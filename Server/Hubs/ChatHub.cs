@@ -493,7 +493,7 @@ namespace Oqtane.ChatHubs.Hubs
         }
 
         [AllowAnonymous]
-        public async Task UploadBytes(IAsyncEnumerable<string> dataURI, int roomId, string dataType)
+        public async Task UploadBytes(IAsyncEnumerable<string> dataURI, string roomId)
         {
             ChatHubUser user = await this.GetChatHubUserAsync();
             var connectionsIds = this.chatHubService.GetAllExceptConnectionIds(user);
@@ -511,7 +511,7 @@ namespace Oqtane.ChatHubs.Hubs
                 dataURIresult += enumerators.Current;
             }
 
-            await Clients.GroupExcept(roomId.ToString(), connectionsIds).SendAsync("DownloadBytes", dataURIresult, roomId, dataType);
+            await Clients.GroupExcept(roomId, connectionsIds).SendAsync("DownloadBytes", dataURIresult, roomId);
         }
 
         [AllowAnonymous]

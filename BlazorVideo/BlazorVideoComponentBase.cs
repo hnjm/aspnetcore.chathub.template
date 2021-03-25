@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using System;
 using System.Threading.Tasks;
 
 namespace BlazorVideo
@@ -14,8 +15,18 @@ namespace BlazorVideo
 
         protected override async Task OnInitializedAsync()
         {
+            this.BlazorVideoService.RunUpdateUI += UpdateUIStateHasChanged;
+
             await this.BlazorVideoService.InitBlazorVideo(this.Id, this.Type);
             await base.OnInitializedAsync();
+        }
+
+        private void UpdateUIStateHasChanged()
+        {
+            InvokeAsync(() =>
+            {
+                StateHasChanged();
+            });
         }
 
     }

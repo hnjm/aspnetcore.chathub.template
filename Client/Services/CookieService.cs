@@ -1,5 +1,4 @@
 ﻿using Microsoft.JSInterop;
-using Oqtane.ChatHubs.Client.Video;
 using Oqtane.Modules;
 using Oqtane.Services;
 using System.Net.Http;
@@ -7,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Oqtane.ChatHubs
 {
-    public class CookieService : ServiceBase, IService, IVideoService
+    public class CookieService : ServiceBase, IService
     {
 
         private readonly IJSRuntime JSRuntime;

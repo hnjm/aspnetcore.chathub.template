@@ -35,7 +35,6 @@ The oqtane chathubs module allows developers to code and run realtime chat. Post
  services.AddMvc().AddNewtonsoftJson(
     options => options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
-services.AddScoped<VideoService, VideoService>();
 services.AddScoped<BlazorAlertsService, BlazorAlertsService>();
 services.AddScoped<BlazorDraggableListService, BlazorDraggableListService>();
 services.AddScoped<BlazorFileUploadService, BlazorFileUploadService>();

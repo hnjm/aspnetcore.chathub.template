@@ -121,6 +121,7 @@ export function initblazorvideo(dotnetobjref, id, type) {
 
                     var __selfgetstream = this;
 
+                    this.recorder = null;
                     this.constrains = {
                         audio: {
                             volume: { ideal: 0.5 },
@@ -189,7 +190,7 @@ export function initblazorvideo(dotnetobjref, id, type) {
 
                     try {
 
-                        if (__selflocallivestream.currentgetstream !== null && __selflocallivestream.currentgetstream.recorder.state === 'inactive' || __selflocallivestream.currentgetstream.recorder.state === 'paused') {
+                        if (__selflocallivestream.currentgetstream?.recorder?.state === 'inactive' || __selflocallivestream.currentgetstream?.recorder?.state === 'paused') {
 
                             __selflocallivestream.currentgetstream.recorder.start();
                         }
@@ -203,7 +204,7 @@ export function initblazorvideo(dotnetobjref, id, type) {
 
                     try {
 
-                        if (__selflocallivestream.currentgetstream !== null && __selflocallivestream.currentgetstream.recorder.state === 'recording' || __selflocallivestream.currentgetstream.recorder.state === 'paused') {
+                        if (__selflocallivestream.currentgetstream?.recorder?.state === 'recording' || __selflocallivestream.currentgetstream?.recorder?.state === 'paused') {
 
                             __selflocallivestream.currentgetstream.recorder.stop();
                         }
@@ -298,10 +299,7 @@ export function initblazorvideo(dotnetobjref, id, type) {
 
                 try {
 
-                    if (__selfblazorvideomap.contextlocallivestream != null) {
-
-                        __selfblazorvideomap.contextlocallivestream.initstream();
-                    }
+                    __selfblazorvideomap.contextlocallivestream.initstream();
                 }
                 catch (ex) {
 
