@@ -278,7 +278,7 @@ export function initblazorvideo(dotnetobjref, id, type) {
                     console.warn(ex);
                 }
             };
-            this.startbroadcasting = function () {
+            this.startbroadcastinglocallivestream = function () {
 
                 try {
 

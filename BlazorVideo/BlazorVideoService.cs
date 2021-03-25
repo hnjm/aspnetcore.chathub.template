@@ -30,18 +30,18 @@ namespace BlazorVideo
             this.Module = await this.JsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorVideo/blazorvideojsinterop.js");
             IJSObjectReference jsobjref = await this.Module.InvokeAsync<IJSObjectReference>("initblazorvideo", this.DotNetObjectRef, id, type.ToString().ToLower());
 
-            this.AddDicItem(id, type, jsobjref);
+            this.AddBlazorVideoMap(id, type, jsobjref);
             this.InitJsMapLocalLivestream(id);
         }
 
-        public void AddDicItem(string id, BlazorVideoType type, IJSObjectReference jsobjref)
+        public void AddBlazorVideoMap(string id, BlazorVideoType type, IJSObjectReference jsobjref)
         {
             if(!this.BlazorVideoMaps.Any(item => item.Value.Id == id))
             {
                 this.BlazorVideoMaps.Add(new KeyValuePair<Guid, BlazorVideoModel>(Guid.NewGuid(), new BlazorVideoModel() { Id = id, Type = type, JsObjRef = jsobjref }));
             }
         }
-        public void RemoveDicItem(Guid guid)
+        public void RemoveBlazorVideoMap(Guid guid)
         {
             if (this.BlazorVideoMaps.Any(item => item.Key== guid))
             {
@@ -54,43 +54,41 @@ namespace BlazorVideo
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
             keyvaluepair.Value.JsObjRef.InvokeVoidAsync("initlocallivestream");
         }
-
-        public void StartBroadcasting(string id)
+        public void StartBroadcastingLocalLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
             this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, VideoOverlay = true };
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startbroadcasting");
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startbroadcastinglocallivestream");
         }
-        public void StartStreaming(string id)
-        {
-            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startstreaming", id);
-        }
-
-        public void StartSequence(string id)
+        public void StartSequenceLocalLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
             keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startsequence", id);
         }
-        public void StopSequence(string id)
+        public void StopSequenceLocalLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
             keyvaluepair.Value.JsObjRef.InvokeVoidAsync("stopsequence", id);
         }
-
-        public void AppendBuffer(string dataURI, string id)
-        {
-            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("appendbuffer", dataURI, id);
-        }
-        public void ContinueLivestreamTask(string id)
+        public void ContinueLocalLivestream(string id)
         {
             this.OnContinueLivestreamTask?.Invoke(typeof(BlazorVideoService), id);
         }
-        public void CloseLivestream(string id)
+        public void CloseLocalLivestream(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
             keyvaluepair.Value.JsObjRef.InvokeVoidAsync("closelivestream", id);
+        }
+
+        public void StartStreamingRemoteLivestream(string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startstreaming", id);
+        }
+        public void AppendBufferRemoteLivestream(string dataURI, string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("appendbuffer", dataURI, id);
         }
 
         public async ValueTask DisposeAsync()
