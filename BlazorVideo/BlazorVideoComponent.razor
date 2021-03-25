@@ -54,7 +54,7 @@
         <div>
             <div class="video-item-resize-container-@Id position-relative">
 
-                <div class="align-items-center justify-content-center px-3 h-100 @(!BlazorVideoService.BlazorVideoMaps.Any(item => item.Value.Id == Id && item.Value.Livestreaming == true) ? "d-flex" : "d-none")">
+                <div class="align-items-center justify-content-center px-3 h-100 @(!BlazorVideoService.BlazorVideoMaps.Any(item => item.Value.Id == Id && item.Value.VideoOverlay == true) ? "d-flex" : "d-none")">
                     <button class="btn btn-lg btn-link text-white bg-dark p-sm-2" type="button" @onclick="async () => BlazorVideoService.StartBroadcasting(Id)">
                         ▷ @Name
                     </button>
@@ -84,7 +84,7 @@
         <div>
             <div class="video-item-resize-container-@Id position-relative">
 
-                <div class="align-items-center justify-content-center px-3 h-100 @(!BlazorVideoService.BlazorVideoMaps.Any(item => item.Value.Id == Id && item.Value.Livestreaming) ? "d-flex" : "d-none")">
+                <div class="align-items-center justify-content-center px-3 h-100 @(!BlazorVideoService.BlazorVideoMaps.Any(item => item.Value.Id == Id && item.Value.VideoOverlay) ? "d-flex" : "d-none")">
                     <button class="btn btn-lg btn-link text-white bg-dark p-sm-2" type="button" @onclick="async () => BlazorVideoService.StartBroadcasting(Id)">
                         ▷ @Name
                     </button>

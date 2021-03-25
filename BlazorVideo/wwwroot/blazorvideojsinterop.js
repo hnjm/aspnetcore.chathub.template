@@ -62,6 +62,11 @@ export function initblazorvideo(dotnetobjref, id, type) {
                 this.vElement.controls = true;
                 this.vElement.muted = true;
 
+                this.vElement.addEventListener("pause", function () {
+
+                    __selflocallivestream.pauselivestreamtask();
+                });
+
                 this.currentgotdevices = null;
                 this.gotDevices = function (mediadeviceinfos) {
 
@@ -164,10 +169,38 @@ export function initblazorvideo(dotnetobjref, id, type) {
                     __selflocallivestream.currentgetstream = new __selflocallivestream.getStream();
                 };
 
+                this.startsequence = function () {
+
+                    try {
+
+                        if (__selflocallivestream.currentgetstream !== null && __selflocallivestream.currentgetstream.recorder.state === 'inactive' || __selflocallivestream.currentgetstream.recorder.state === 'paused') {
+
+                            __selflocallivestream.currentgetstream.recorder.start();
+                        }
+                    }
+                    catch (ex) {
+
+                        console.warn(ex);
+                    }
+                };
+                this.stopsequence = function () {
+
+                    try {
+
+                        if (__selflocallivestream.currentgetstream !== null && __selflocallivestream.currentgetstream.recorder.state === 'recording' || __selflocallivestream.currentgetstream.recorder.state === 'paused') {
+
+                            __selflocallivestream.currentgetstream.recorder.stop();
+                        }
+                    }
+                    catch (ex) {
+                        console.warn(ex);
+                    }
+                };
+
                 this.handleonchangeevent = async function () {
 
                     await __selflocallivestream.cancel();
-                    __selflocallivestream.currentgetstream = new __selflocallivestream.getStream();
+                    __selflocallivestream.initstream();
                 };
 
                 this.audioselect.removeEventListener("change", __selflocallivestream.handleonchangeevent);
@@ -175,6 +208,63 @@ export function initblazorvideo(dotnetobjref, id, type) {
 
                 this.videoselect.removeEventListener("change", __selflocallivestream.handleonchangeevent);
                 this.videoselect.addEventListener("change", __selflocallivestream.handleonchangeevent);
+
+                this.broadcastvideodata = function (sequence) {
+
+                    var reader = new FileReader();
+                    reader.onloadend = async function (event) {
+
+                        var dataURI = event.target.result;
+
+                        var totalBytes = Math.ceil(event.total * 8 / 6);
+                        var totalKiloBytes = Math.ceil(totalBytes / 1024);
+                        if (totalKiloBytes >= 500) {
+
+                            console.warn('data uri too large to broadcast >= 500kb');
+                            return;
+                        }
+
+                        dotnetobjref.invokeMethodAsync('OnDataAvailable', dataURI, id);
+                    };
+                    reader.readAsDataURL(sequence);
+                };
+                this.pauselivestreamtask = function () {
+
+                    dotnetobjref.invokeMethodAsync('PauseLivestreamTask', id);
+                };
+                this.continuelivestreamtask = function () {
+
+                    dotnetobjref.invokeMethodAsync('ContinueLivestreamTask', id);
+                };
+
+                this.cancel = function () {
+
+                    var promise = new Promise(function (resolve) {
+
+                        try {
+
+                            if (__selflocallivestream.currentgetstream !== null) {
+
+                                if (__selflocallivestream.currentgetstream.recorder !== undefined) {
+
+                                    __selflocallivestream.currentgetstream.recorder.stream.getTracks().forEach(track => track.stop());
+                                    __selflocallivestream.currentgetstream.recorder.stop();
+                                }
+
+                                __selflocallivestream.currentgetstream = null;
+                                delete __selflocallivestream.currentgetstream;
+                            }
+
+                            __selflocallivestream.vElement.srcObject = null;
+                            resolve();
+                        }
+                        catch (err) {
+                            console.error(err);
+                        }
+                    });
+
+                    return promise;
+                };
 
             };
             this.initlocallivestream = async function () {

@@ -17,13 +17,14 @@ namespace BlazorVideo
         public DotNetObjectReference<BlazorVideoServiceExtension> DotNetObjectRef;
         public BlazorVideoServiceExtension BlazorVideoServiceExtension;
 
+        public event EventHandler<string> OnContinueLivestreamTask;
+
         public BlazorVideoService(IJSRuntime jsRuntime)
         {
             this.JsRuntime = jsRuntime;
             this.BlazorVideoServiceExtension = new BlazorVideoServiceExtension();
             this.DotNetObjectRef = DotNetObjectReference.Create(this.BlazorVideoServiceExtension);
         }
-
         public async Task InitBlazorVideo(string id, BlazorVideoType type)
         {
             this.Module = await this.JsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorVideo/blazorvideojsinterop.js");
@@ -40,7 +41,6 @@ namespace BlazorVideo
                 this.BlazorVideoMaps.Add(new KeyValuePair<Guid, BlazorVideoModel>(Guid.NewGuid(), new BlazorVideoModel() { Id = id, Type = type, JsObjRef = jsobjref }));
             }
         }
-
         public void RemoveDicItem(Guid guid)
         {
             if (this.BlazorVideoMaps.Any(item => item.Key== guid))
@@ -58,8 +58,39 @@ namespace BlazorVideo
         public void StartBroadcasting(string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, Livestreaming = true };
+            this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, VideoOverlay = true };
             keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startbroadcasting");
+        }
+        public void StartStreaming(string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startstreaming", id);
+        }
+
+        public void StartSequence(string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startsequence", id);
+        }
+        public void StopSequence(string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("stopsequence", id);
+        }
+
+        public void AppendBuffer(string dataURI, string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("appendbuffer", dataURI, id);
+        }
+        public void ContinueLivestreamTask(string id)
+        {
+            this.OnContinueLivestreamTask?.Invoke(typeof(BlazorVideoService), id);
+        }
+        public void CloseLivestream(string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("closelivestream", id);
         }
 
         public async ValueTask DisposeAsync()
@@ -78,11 +109,18 @@ namespace BlazorVideo
     {
 
         public event EventHandler<dynamic> OnDataAvailableEventHandler;
+        public event EventHandler<string> OnPauseLivestreamTask;
 
         [JSInvokable("OnDataAvailable")]
         public void OnDataAvailable(string dataURI, int id)
         {
             this.OnDataAvailableEventHandler?.Invoke(typeof(BlazorVideoServiceExtension), new { dataURI = dataURI, id = id });
+        }
+
+        [JSInvokable("PauseLivestreamTask")]
+        public void PauseLivestreamTask(string id)
+        {
+            this.OnPauseLivestreamTask?.Invoke(typeof(BlazorVideoServiceExtension), id);
         }
 
     }
