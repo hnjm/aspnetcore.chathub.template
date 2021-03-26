@@ -83,6 +83,7 @@ export function initblazorvideo(dotnetobjref, id, type) {
                     __selflocallivestream.pauselivestreamtask();
                 });
 
+                this.currentgotdevices = null;
                 this.gotDevices = function (mediadeviceinfos) {
 
                     var audioselectchild = __selflocallivestream.audioselect.firstElementChild;
@@ -168,7 +169,7 @@ export function initblazorvideo(dotnetobjref, id, type) {
                         window.navigator.mediaDevices.enumerateDevices()
                             .then(function (mediadeviceinfos) {
 
-                                __selflocallivestream.gotDevices(mediadeviceinfos);
+                                __selflocallivestream.currentgotdevices = new __selflocallivestream.gotDevices(mediadeviceinfos);
                             })
                             .catch(function (ex) {
 
