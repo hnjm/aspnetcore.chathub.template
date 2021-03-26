@@ -32,14 +32,17 @@ namespace BlazorVideo
         public async Task InitBlazorVideo(string id, BlazorVideoType type)
         {
             this.Module = await this.JsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorVideo/blazorvideojsinterop.js");
-            IJSObjectReference jsobjref = await this.Module.InvokeAsync<IJSObjectReference>("initblazorvideo", this.DotNetObjectRef, id, type.ToString().ToLower());
+        }
 
+        public async Task InitBlazorVideoMap(string id, BlazorVideoType type)
+        {
+            IJSObjectReference jsobjref = await this.Module.InvokeAsync<IJSObjectReference>("initblazorvideo", this.DotNetObjectRef, id, type.ToString().ToLower());
             this.AddBlazorVideoMap(id, type, jsobjref);
-            await this.InitJsLivestreams(id, type); 
         }
 
         public async Task InitJsLivestreams(string id, BlazorVideoType type)
         {
+
             if (type == BlazorVideoType.LocalLivestream)
             {
                 await this.InitLocalLivestream(id);
@@ -52,14 +55,20 @@ namespace BlazorVideo
 
         public void AddBlazorVideoMap(string id, BlazorVideoType type, IJSObjectReference jsobjref)
         {
-            if(!this.BlazorVideoMaps.Any(item => item.Value.Id == id))
+            if (!this.BlazorVideoMaps.Any(item => item.Value.Id == id))
             {
                 this.BlazorVideoMaps.Add(new KeyValuePair<Guid, BlazorVideoModel>(Guid.NewGuid(), new BlazorVideoModel() { Id = id, Type = type, JsObjRef = jsobjref, VideoOverlay = true }));
             }
+            else
+            {
+                var map = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+                this.BlazorVideoMaps[map.Key] = new BlazorVideoModel() { Id = id, Type = type, JsObjRef = jsobjref, VideoOverlay = map.Value.VideoOverlay };
+            }
         }
+
         public void RemoveBlazorVideoMap(Guid guid)
         {
-            if (this.BlazorVideoMaps.Any(item => item.Key== guid))
+            if (this.BlazorVideoMaps.Any(item => item.Key == guid))
             {
                 this.BlazorVideoMaps.Remove(guid);
             }
@@ -113,6 +122,8 @@ namespace BlazorVideo
             {
                 var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == roomId);
                 await this.StopVideoChat(keyvaluepair.Value.Id);
+
+                await this.InitBlazorVideoMap(keyvaluepair.Value.Id, keyvaluepair.Value.Type);
                 await this.InitJsLivestreams(keyvaluepair.Value.Id, keyvaluepair.Value.Type);
 
                 if (keyvaluepair.Value.Type == BlazorVideoType.LocalLivestream)

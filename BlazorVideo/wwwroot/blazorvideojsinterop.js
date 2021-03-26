@@ -284,8 +284,8 @@ export function initblazorvideo(dotnetobjref, id, type) {
 
                 try {
                     
-                    delete __selfblazorvideomap.contextlocallivestream;
-                    __selfblazorvideomap.contextlocallivestream = null;
+                    //delete __selfblazorvideomap.contextlocallivestream;
+                    //__selfblazorvideomap.contextlocallivestream = null;
 
                     __selfblazorvideomap.contextlocallivestream = new __selfblazorvideomap.locallivestream();
                     await __selfblazorvideomap.contextlocallivestream.initdevices();

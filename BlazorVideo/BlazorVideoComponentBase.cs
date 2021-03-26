@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace BlazorVideo
 {
-    public class BlazorVideoComponentBase : ComponentBase
+    public class BlazorVideoComponentBase : ComponentBase, IDisposable
     {
 
         [Inject] public BlazorVideoService BlazorVideoService { get; set; }
@@ -18,6 +18,9 @@ namespace BlazorVideo
             this.BlazorVideoService.RunUpdateUI += UpdateUIStateHasChanged;
 
             await this.BlazorVideoService.InitBlazorVideo(this.Id, this.Type);
+            await this.BlazorVideoService.InitBlazorVideoMap(this.Id, this.Type);
+            await this.BlazorVideoService.InitJsLivestreams(this.Id, this.Type);
+
             await base.OnInitializedAsync();
         }
 
@@ -27,6 +30,11 @@ namespace BlazorVideo
             {
                 StateHasChanged();
             });
+        }
+
+        public void Dispose()
+        {
+            this.BlazorVideoService.RunUpdateUI -= UpdateUIStateHasChanged;
         }
 
     }
