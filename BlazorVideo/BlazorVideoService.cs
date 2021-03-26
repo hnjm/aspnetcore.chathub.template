@@ -101,10 +101,10 @@ namespace BlazorVideo
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
             await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("initremotelivestream");
         }
-        public void AppendBufferRemoteLivestream(string dataURI, string id)
+        public async Task AppendBufferRemoteLivestream(string dataURI, string id)
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-            keyvaluepair.Value.JsObjRef.InvokeVoidAsync("appendbufferremotelivestream", dataURI);
+            await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("appendbufferremotelivestream", dataURI);
         }
 
         public async Task StartVideoChat(string roomId)
@@ -145,18 +145,18 @@ namespace BlazorVideo
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == videoMap);
             if (keyvaluepair.Value.Type == BlazorVideoType.LocalLivestream)
             {
-                this.RemoveLocalStreamTask(videoMap);
-                await this.CloseLocalLivestream(videoMap);
-
                 this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, VideoOverlay = true };
                 this.RunUpdateUI.Invoke();
+
+                this.RemoveLocalStreamTask(videoMap);
+                await this.CloseLocalLivestream(videoMap);
             }
             else if (keyvaluepair.Value.Type == BlazorVideoType.RemoteLivestream)
             {
-                this.RemoveRemoteStreamTask(videoMap);
-
                 this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, VideoOverlay = true };
                 this.RunUpdateUI.Invoke();
+
+                this.RemoveRemoteStreamTask(videoMap);
             }
         }
         public async Task RestartStreamTaskIfExists(string roomId)

@@ -170,16 +170,15 @@ export function initblazorvideo(dotnetobjref, id, type) {
                             .then(function (mediadeviceinfos) {
 
                                 __selflocallivestream.currentgotdevices = new __selflocallivestream.gotDevices(mediadeviceinfos);
+                                resolve();
                             })
                             .catch(function (ex) {
 
                                 console.warn(ex.message);
-                            })
-                            .finally(function () {
-
-                                resolve();
                             });
                     });
+
+                    return promise;
                 };
                 this.initstream = function () {
 
@@ -260,17 +259,14 @@ export function initblazorvideo(dotnetobjref, id, type) {
 
                         try {
 
-                            if (__selflocallivestream.currentgetstream !== null) {
+                            if (__selflocallivestream.currentgetstream?.recorder?.state === 'recording' || __selflocallivestream.currentgetstream?.recorder?.state === 'paused') {
 
-                                if (__selflocallivestream.currentgetstream.recorder !== undefined) {
-
-                                    __selflocallivestream.currentgetstream.recorder.stream.getTracks().forEach(track => track.stop());
-                                    __selflocallivestream.currentgetstream.recorder.stop();
-                                }
-
-                                __selflocallivestream.currentgetstream = null;
-                                delete __selflocallivestream.currentgetstream;
+                                __selflocallivestream.currentgetstream?.recorder?.stream.getTracks().forEach(track => track.stop());
+                                __selflocallivestream.currentgetstream?.recorder?.stop();
                             }
+
+                            delete __selflocallivestream.currentgetstream;
+                            __selflocallivestream.currentgetstream = null;
 
                             __selflocallivestream.vElement.srcObject = null;
                             resolve();
@@ -287,6 +283,9 @@ export function initblazorvideo(dotnetobjref, id, type) {
             this.initlocallivestream = async function () {
 
                 try {
+                    
+                    delete __selfblazorvideomap.contextlocallivestream;
+                    __selfblazorvideomap.contextlocallivestream = null;
 
                     __selfblazorvideomap.contextlocallivestream = new __selfblazorvideomap.locallivestream();
                     await __selfblazorvideomap.contextlocallivestream.initdevices();
@@ -418,6 +417,7 @@ export function initblazorvideo(dotnetobjref, id, type) {
             this.initremotelivestream = function () {
 
                 try {
+
                     __selfblazorvideomap.contextremotelivestream = new __selfblazorvideomap.remotelivestream();
                 }
                 catch (ex) {
