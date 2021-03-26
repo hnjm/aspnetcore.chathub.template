@@ -59,11 +59,6 @@ namespace BlazorVideo
             {
                 this.BlazorVideoMaps.Add(new KeyValuePair<Guid, BlazorVideoModel>(Guid.NewGuid(), new BlazorVideoModel() { Id = id, Type = type, JsObjRef = jsobjref, VideoOverlay = true }));
             }
-            else
-            {
-                var map = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
-                this.BlazorVideoMaps[map.Key] = new BlazorVideoModel() { Id = id, Type = type, JsObjRef = jsobjref, VideoOverlay = map.Value.VideoOverlay };
-            }
         }
 
         public void RemoveBlazorVideoMap(Guid guid)
@@ -78,6 +73,11 @@ namespace BlazorVideo
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
             await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("initlocallivestream");
+        }
+        public async Task InitDevicesLocalLivestream(string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+            await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("initdeviceslocallivestream");
         }
         public async Task StartSequenceLocalLivestream(string id)
         {
@@ -122,10 +122,6 @@ namespace BlazorVideo
             {
                 var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == roomId);
                 await this.StopVideoChat(keyvaluepair.Value.Id);
-
-                await this.InitBlazorVideo(keyvaluepair.Value.Id, keyvaluepair.Value.Type);
-                await this.InitBlazorVideoMap(keyvaluepair.Value.Id, keyvaluepair.Value.Type);
-                await this.InitJsLivestreams(keyvaluepair.Value.Id, keyvaluepair.Value.Type);
 
                 if (keyvaluepair.Value.Type == BlazorVideoType.LocalLivestream)
                 {

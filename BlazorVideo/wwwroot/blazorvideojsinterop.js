@@ -284,10 +284,17 @@ export function initblazorvideo(dotnetobjref, id, type) {
 
                 try {
                     
-                    //delete __selfblazorvideomap.contextlocallivestream;
-                    //__selfblazorvideomap.contextlocallivestream = null;
-
                     __selfblazorvideomap.contextlocallivestream = new __selfblazorvideomap.locallivestream();
+                }
+                catch (ex) {
+
+                    console.warn(ex);
+                }
+            };
+            this.initdeviceslocallivestream = async function () {
+
+                try {
+
                     await __selfblazorvideomap.contextlocallivestream.initdevices();
                 }
                 catch (ex) {
@@ -314,9 +321,9 @@ export function initblazorvideo(dotnetobjref, id, type) {
 
                 this.contextlocallivestream.stopsequence();
             };
-            this.closelocallivestream = function () {
+            this.closelocallivestream = async function () {
 
-                this.contextlocallivestream.cancel();
+                await this.contextlocallivestream.cancel();
             };
 
             this.contextremotelivestream = null;
