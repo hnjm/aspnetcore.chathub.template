@@ -123,6 +123,7 @@ namespace BlazorVideo
                 var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == roomId);
                 await this.StopVideoChat(keyvaluepair.Value.Id);
 
+                await this.InitBlazorVideo(keyvaluepair.Value.Id, keyvaluepair.Value.Type);
                 await this.InitBlazorVideoMap(keyvaluepair.Value.Id, keyvaluepair.Value.Type);
                 await this.InitJsLivestreams(keyvaluepair.Value.Id, keyvaluepair.Value.Type);
 
