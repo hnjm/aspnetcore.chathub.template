@@ -105,6 +105,11 @@ namespace BlazorVideo
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
             await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("appendbufferremotelivestream", dataURI);
         }
+        public async Task CloseRemoteLivestream(string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+            await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("closeremotelivestream");
+        }
 
         public async Task StartVideoChat(string roomId)
         {
@@ -151,7 +156,6 @@ namespace BlazorVideo
                 this.RunUpdateUI.Invoke();
 
                 this.RemoveLocalStreamTask(videoMap);
-
                 await this.CloseLocalLivestream(videoMap);
             }
             else if (keyvaluepair.Value.Type == BlazorVideoType.RemoteLivestream)
@@ -160,6 +164,7 @@ namespace BlazorVideo
                 this.RunUpdateUI.Invoke();
 
                 this.RemoveRemoteStreamTask(videoMap);
+                await this.CloseRemoteLivestream(videoMap);
             }
         }
         public async Task RestartStreamTaskIfExists(string roomId)

@@ -486,9 +486,6 @@ export function initblazorvideo(dotnetobjref, id, type) {
                         console.error(ex);
                     }
                 };
-                this.cancel = function () {
-
-                };
             };
             this.initremotelivestream = function () {
 
@@ -525,6 +522,14 @@ export function initblazorvideo(dotnetobjref, id, type) {
                 catch (ex) {
 
                     console.warn(ex);
+                }
+            };
+            this.closeremotelivestream = async function () {
+
+                var livestream = __selfblazorvideomap.getlivestream(id);
+                if (livestream !== undefined && livestream.item instanceof __selfblazorvideomap.remotelivestream) {
+
+                    __selfblazorvideomap.removelivestream(id);
                 }
             };
         }
