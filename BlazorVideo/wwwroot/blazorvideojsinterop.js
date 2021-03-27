@@ -396,7 +396,6 @@ export function initblazorvideo(dotnetobjref, id, type) {
                 }
             };
 
-            this.contextremotelivestream = null;
             this.remotelivestream = function () {
 
                 var __selfremotelivestream = this;
@@ -447,7 +446,7 @@ export function initblazorvideo(dotnetobjref, id, type) {
                     this.video.src = URL.createObjectURL(this.mediasource);
                 }
 
-                this.appendbuffer = async function (base64str) {
+                this.appendbuffer = function (base64str) {
 
                     try {
 
@@ -495,7 +494,18 @@ export function initblazorvideo(dotnetobjref, id, type) {
 
                 try {
 
-                    __selfblazorvideomap.contextremotelivestream = new __selfblazorvideomap.remotelivestream();
+                    __selfblazorvideomap.getlivestream(id);
+                    if (livestream === undefined) {
+
+                        var livestream = new __selfblazorvideomap.remotelivestream();
+                        var livestreamdicitem = {
+
+                            id: id,
+                            item: livestream,
+                        };
+
+                        __selfblazorvideomap.addlivestream(livestreamdicitem);
+                    }
                 }
                 catch (ex) {
 
@@ -504,7 +514,18 @@ export function initblazorvideo(dotnetobjref, id, type) {
             };
             this.appendbufferremotelivestream = function (base64str) {
 
-                this.contextremotelivestream.appendbuffer(base64str);
+                try {
+
+                    var livestream = __selfblazorvideomap.getlivestream(id);
+                    if (livestream !== undefined && livestream.item instanceof __selfblazorvideomap.remotelivestream) {
+
+                        livestream.item.appendbuffer(base64str);
+                    }
+                }
+                catch (ex) {
+
+                    console.warn(ex);
+                }
             };
         }
     }
