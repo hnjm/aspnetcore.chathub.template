@@ -19,8 +19,8 @@ namespace BlazorVideo
 
             await this.BlazorVideoService.InitBlazorVideo(this.Id, this.Type);
             await this.BlazorVideoService.InitBlazorVideoMap(this.Id, this.Type);
-            await this.BlazorVideoService.InitJsLivestreams(this.Id, this.Type);
-            await this.BlazorVideoService.InitDevicesLocalLivestream(this.Id);
+            //await this.BlazorVideoService.InitJsLivestreams(this.Id, this.Type);
+            //await this.BlazorVideoService.InitDevicesLocalLivestream(this.Id);
 
             await base.OnInitializedAsync();
         }

@@ -33,26 +33,12 @@ namespace BlazorVideo
         {
             this.Module = await this.JsRuntime.InvokeAsync<IJSObjectReference>("import", "./_content/BlazorVideo/blazorvideojsinterop.js");
         }
-
         public async Task InitBlazorVideoMap(string id, BlazorVideoType type)
         {
             IJSObjectReference jsobjref = await this.Module.InvokeAsync<IJSObjectReference>("initblazorvideo", this.DotNetObjectRef, id, type.ToString().ToLower());
             this.AddBlazorVideoMap(id, type, jsobjref);
         }
-
-        public async Task InitJsLivestreams(string id, BlazorVideoType type)
-        {
-
-            if (type == BlazorVideoType.LocalLivestream)
-            {
-                await this.InitLocalLivestream(id);
-            }
-            if (type == BlazorVideoType.RemoteLivestream)
-            {
-                await this.InitRemoteLivestream(id);
-            }
-        }
-
+        
         public void AddBlazorVideoMap(string id, BlazorVideoType type, IJSObjectReference jsobjref)
         {
             if (!this.BlazorVideoMaps.Any(item => item.Value.Id == id))
@@ -60,7 +46,6 @@ namespace BlazorVideo
                 this.BlazorVideoMaps.Add(new KeyValuePair<Guid, BlazorVideoModel>(Guid.NewGuid(), new BlazorVideoModel() { Id = id, Type = type, JsObjRef = jsobjref, VideoOverlay = true }));
             }
         }
-
         public void RemoveBlazorVideoMap(Guid guid)
         {
             if (this.BlazorVideoMaps.Any(item => item.Key == guid))
@@ -78,6 +63,11 @@ namespace BlazorVideo
         {
             var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
             await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("initdeviceslocallivestream");
+        }
+        public async Task StartBroadcastingLocalLivestream(string id)
+        {
+            var keyvaluepair = this.BlazorVideoMaps.FirstOrDefault(item => item.Value.Id == id);
+            await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startbroadcastinglocallivestream");
         }
         public async Task StartSequenceLocalLivestream(string id)
         {
@@ -125,7 +115,10 @@ namespace BlazorVideo
 
                 if (keyvaluepair.Value.Type == BlazorVideoType.LocalLivestream)
                 {
-                    await keyvaluepair.Value.JsObjRef.InvokeVoidAsync("startbroadcastinglocallivestream");
+                    //await this.InitLocalLivestream(keyvaluepair.Value.Id);
+                    //await this.InitDevicesLocalLivestream(keyvaluepair.Value.Id);
+                    await this.StartBroadcastingLocalLivestream(keyvaluepair.Value.Id);
+
                     this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, VideoOverlay = false };
                     this.RunUpdateUI.Invoke();
 
@@ -158,6 +151,8 @@ namespace BlazorVideo
 
                 this.RemoveLocalStreamTask(videoMap);
                 await this.CloseLocalLivestream(videoMap);
+                await this.InitLocalLivestream(keyvaluepair.Value.Id);
+                await this.InitDevicesLocalLivestream(keyvaluepair.Value.Id);
             }
             else if (keyvaluepair.Value.Type == BlazorVideoType.RemoteLivestream)
             {
