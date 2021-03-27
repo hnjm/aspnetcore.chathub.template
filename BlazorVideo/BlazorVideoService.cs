@@ -115,6 +115,8 @@ namespace BlazorVideo
 
                 if (keyvaluepair.Value.Type == BlazorVideoType.LocalLivestream)
                 {
+                    await this.InitLocalLivestream(keyvaluepair.Value.Id);
+                    await this.InitDevicesLocalLivestream(keyvaluepair.Value.Id);
                     await this.StartBroadcastingLocalLivestream(keyvaluepair.Value.Id);
 
                     this.BlazorVideoMaps[keyvaluepair.Key] = new BlazorVideoModel() { Id = keyvaluepair.Value.Id, JsObjRef = keyvaluepair.Value.JsObjRef, Type = keyvaluepair.Value.Type, VideoOverlay = false };
@@ -149,9 +151,8 @@ namespace BlazorVideo
                 this.RunUpdateUI.Invoke();
 
                 this.RemoveLocalStreamTask(videoMap);
+
                 await this.CloseLocalLivestream(videoMap);
-                await this.InitLocalLivestream(keyvaluepair.Value.Id);
-                await this.InitDevicesLocalLivestream(keyvaluepair.Value.Id);
             }
             else if (keyvaluepair.Value.Type == BlazorVideoType.RemoteLivestream)
             {

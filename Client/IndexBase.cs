@@ -116,17 +116,6 @@ namespace Oqtane.ChatHubs
                 string hostname = new Uri(NavigationManager.BaseUri).Host;
                 this.ChatHubService.IdentityCookie = new Cookie(".AspNetCore.Identity.Application", await this.CookieService.GetCookieAsync(".AspNetCore.Identity.Application"), "/", hostname);
 
-                /*
-                JsRuntimeObjectRef objref = await this.JSRuntime.InvokeAsync<JsRuntimeObjectRef>("__init", this.VideoService.dotNetObjectReference, this.BlazorDraggableListService.dotNetObjectReference, this.BrowserResizeService.dotNetObjectReference, this.BlazorFileUploadService.dotNetObjectReference);
-                this.VideoService.__jsRuntimeObjectRef = objref;
-                this.BlazorDraggableListService.__jsRuntimeObjectRef = objref;
-                this.BrowserResizeService.__jsRuntimeObjectRef = objref;
-                this.BlazorFileUploadService.__jsRuntimeObjectRef = objref;
-
-                await this.BrowserResizeService.RegisterWindowResizeCallback();
-                await BrowserHasResized();
-                */
-
                 this.BrowserResizeService.RegisterWindowResizeCallback();
                 await BrowserHasResized();
 
@@ -156,6 +145,7 @@ namespace Oqtane.ChatHubs
                 this.ChatHubService.HandleException(ex);
             }
         }
+
         public async Task EnableArchiveRoom(ChatHubRoom room)
         {
             try
