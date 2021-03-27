@@ -25,6 +25,16 @@ namespace BlazorVideo
             await base.OnInitializedAsync();
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await this.BlazorVideoService.ContinueLocalLivestreamAsync(this.Id);
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
         private void UpdateUIStateHasChanged()
         {
             InvokeAsync(() =>
