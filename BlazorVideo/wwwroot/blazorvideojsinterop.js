@@ -1,8 +1,8 @@
-export function initblazorvideo(dotnetobjref, id, type) {
+export function initblazorvideo(dotnetobjref, id, connectionid, type) {
 
     var __obj = {
 
-        blazorvideomap: function (dotnetobjref, id, type) {
+        blazorvideomap: function (dotnetobjref, id, connectionid, type) {
             
             var __selfblazorvideomap = this;
 
@@ -288,7 +288,6 @@ export function initblazorvideo(dotnetobjref, id, type) {
 
                     dotnetobjref.invokeMethodAsync('ContinueLivestreamTask', id);
                 };
-
                 this.cancel = function () {
 
                     var promise = new Promise(function (resolve) {
@@ -535,5 +534,5 @@ export function initblazorvideo(dotnetobjref, id, type) {
         }
     }
 
-    return new __obj.blazorvideomap(dotnetobjref, id, type);
+    return new __obj.blazorvideomap(dotnetobjref, id, connectionid, type);
 };
